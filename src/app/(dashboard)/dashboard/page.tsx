@@ -353,6 +353,7 @@ export default function DashboardPage() {
                         <Button
                           variant='contained'
                           size='small'
+                          href='/trees'
                           sx={{
                             bgcolor: '#176B4D',
                             color: '#ffffff',

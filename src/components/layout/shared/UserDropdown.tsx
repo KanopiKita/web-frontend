@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import type { MouseEvent } from 'react'
 
 // Next Imports
@@ -20,11 +20,12 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 
-// Hook Imports
+// Hook & API Imports
 import { useSettings } from '@core/hooks/useSettings'
+import { KanopiApi } from '@/libs/apiClient'
 
-// Styled component for badge content
 const BadgeContentSpan = styled('span')({
   width: 8,
   height: 8,
@@ -34,20 +35,65 @@ const BadgeContentSpan = styled('span')({
   boxShadow: '0 0 0 2px var(--mui-palette-background-paper)'
 })
 
+interface ActiveUser {
+  id?: string
+  name: string
+  email: string
+  role: string
+}
+
 const UserDropdown = () => {
-  // States
   const [open, setOpen] = useState(false)
+  const [user, setUser] = useState<ActiveUser>({
+    name: 'Super Admin Kanopi',
+    email: 'admin@kanopikita.id',
+    role: 'SUPERADMIN'
+  })
 
-  // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
-
-  // Hooks
   const router = useRouter()
-
   const { settings } = useSettings()
 
+  useEffect(() => {
+    // 1. Cek localStorage terlebih dahulu
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('user')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          if (parsed?.email) {
+            setUser({
+              id: parsed.id,
+              name: parsed.name || 'Admin Kanopi',
+              email: parsed.email,
+              role: parsed.role || 'SUPERADMIN'
+            })
+          }
+        } catch {}
+      }
+    }
+
+    // 2. Sinkronisasi dari /v1/me Backend
+    KanopiApi.getCurrentUser()
+      .then((res: any) => {
+        if (res?.email) {
+          const activeUser: ActiveUser = {
+            id: res.id,
+            name: res.name || 'Super Admin Kanopi',
+            email: res.email,
+            role: res.role || res.active_role || 'SUPERADMIN'
+          }
+          setUser(activeUser)
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(activeUser))
+          }
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   const handleDropdownOpen = () => {
-    !open ? setOpen(true) : setOpen(false)
+    setOpen(prev => !prev)
   }
 
   const handleDropdownClose = (event?: MouseEvent<HTMLLIElement> | (MouseEvent | TouchEvent), url?: string) => {
@@ -63,8 +109,19 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
-    // Redirect to login page
-    router.push('/login')
+    try {
+      const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') || undefined : undefined
+      await KanopiApi.logout(refreshToken).catch(() => {})
+    } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('user')
+        document.cookie = 'access_token=; path=/; max-age=0'
+      }
+      setOpen(false)
+      router.push('/login')
+    }
   }
 
   return (
@@ -78,7 +135,7 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
+          alt={user.name}
           src='/images/avatars/1.png'
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
@@ -90,7 +147,7 @@ const UserDropdown = () => {
         disablePortal
         placement='bottom-end'
         anchorEl={anchorRef.current}
-        className='min-is-[240px] !mbs-4 z-[1]'
+        className='min-is-[260px] !mbs-4 z-[1]'
       >
         {({ TransitionProps, placement }) => (
           <Fade
@@ -106,30 +163,35 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-4 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    <Avatar alt={user.name} src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography variant='body2' className='font-medium' color='text.primary'>
-                        Administrator Platform
+                        {user.name}
                       </Typography>
-                      <Typography variant='caption'>admin@kanopikita.org</Typography>
+                      <Typography variant='caption'>{user.email}</Typography>
+                      <Chip
+                        label={user.role}
+                        size='small'
+                        sx={{ mt: 0.5, height: 18, fontSize: '0.65rem', bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 700 }}
+                      />
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e)}>
-                    <i className='ri-user-3-line' />
-                    <Typography color='text.primary'>My Profile</Typography>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/users')}>
+                    <i className='ri-user-settings-line' />
+                    <Typography color='text.primary'>Manajemen Akun & RBAC</Typography>
                   </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e)}>
-                    <i className='ri-settings-4-line' />
-                    <Typography color='text.primary'>Settings</Typography>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/areas')}>
+                    <i className='ri-map-pin-line' />
+                    <Typography color='text.primary'>Kawasan Konservasi</Typography>
                   </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e)}>
-                    <i className='ri-money-dollar-circle-line' />
-                    <Typography color='text.primary'>Pricing</Typography>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/adoptions')}>
+                    <i className='ri-hand-heart-line' />
+                    <Typography color='text.primary'>Paket & Transaksi Adopsi</Typography>
                   </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e)}>
-                    <i className='ri-question-line' />
-                    <Typography color='text.primary'>FAQ</Typography>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/about')}>
+                    <i className='ri-information-line' />
+                    <Typography color='text.primary'>Tentang Platform</Typography>
                   </MenuItem>
                   <div className='flex items-center plb-1.5 pli-4'>
                     <Button
@@ -140,7 +202,7 @@ const UserDropdown = () => {
                       endIcon={<i className='ri-logout-box-r-line' />}
                       onClick={handleUserLogout}
                     >
-                      Logout
+                      Keluar (Logout)
                     </Button>
                   </div>
                 </MenuList>

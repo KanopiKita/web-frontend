@@ -2,7 +2,7 @@
 # Kanopi Kita Frontend Service Manager
 # Manages Next.js Web Dashboard on Port 3001
 
-FRONTEND_DIR="/home/kanopi/kanopi-apps/frontend"
+FRONTEND_DIR="/root/kanopi/kanopi-apps/frontend"
 PID_FILE="$FRONTEND_DIR/service.pid"
 LOG_FILE="$FRONTEND_DIR/service.log"
 PORT=3001

@@ -97,6 +97,21 @@ export default function TreesPage() {
     setOpenModal(false)
   }
 
+  const handleExportCsv = () => {
+    const headers = ['Kode Pohon,Spesies Lokal,Spesies Ilmiah,Kawasan,DBH,Tinggi,Kesehatan,Status Adopsi,Tanggal']
+    const rows = filteredTrees.map(t =>
+      `"${t.id}","${t.speciesLocal}","${t.speciesLatin}","${t.area}","${t.dbh}","${t.height}","${t.health}","${t.adoptionStatus}","${t.date}"`
+    )
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n')
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute('download', 'inventaris-pohon-kanopi-kita.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   const filteredTrees = trees.filter(t => {
     if (filterStatus === 'ALL') return true
     if (filterStatus === 'ELIGIBLE') return t.adoptionStatus === 'ELIGIBLE' || t.status === 'VERIFIED'
@@ -134,6 +149,7 @@ export default function TreesPage() {
           <Button
             variant='contained'
             startIcon={<i className='ri-download-2-line' />}
+            onClick={handleExportCsv}
             sx={{ bgcolor: '#176B4D', textTransform: 'none', fontWeight: 600, '&:hover': { bgcolor: '#104D39' } }}
           >
             Ekspor Data (CSV)

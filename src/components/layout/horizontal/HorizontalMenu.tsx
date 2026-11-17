@@ -43,11 +43,8 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }: RenderVerticalEx
 )
 
 const HorizontalMenu = () => {
-  // Hooks
   const verticalNavOptions = useVerticalNav()
   const theme = useTheme()
-
-  // Vars
   const { transitionDuration } = verticalNavOptions
 
   return (
@@ -76,32 +73,34 @@ const HorizontalMenu = () => {
           renderExpandedMenuItemIcon: { icon: <i className='ri-circle-fill' /> }
         }}
       >
-        <MenuItem href='/' icon={<i className='ri-home-smile-line' />}>
-          Home
+        <MenuItem href='/dashboard' icon={<i className='ri-dashboard-line' />}>
+          Dashboard
         </MenuItem>
-        <MenuItem href='/about' icon={<i className='ri-information-line' />}>
-          About
+        <MenuItem href='/areas' icon={<i className='ri-map-2-line' />}>
+          Kawasan & WebGIS
+        </MenuItem>
+        <MenuItem href='/trees' icon={<i className='ri-plant-line' />}>
+          Inventaris Pohon
+        </MenuItem>
+        <MenuItem href='/surveys' icon={<i className='ri-file-list-3-line' />}>
+          Survei Lapangan
+        </MenuItem>
+        <MenuItem href='/adoptions' icon={<i className='ri-hand-heart-line' />}>
+          Adopsi & Invoice
+        </MenuItem>
+        <MenuItem href='/carbon-certificates' icon={<i className='ri-award-line' />}>
+          Sertifikat Karbon
+        </MenuItem>
+        <MenuItem href='/incidents' icon={<i className='ri-alarm-warning-line' />}>
+          Triage Insiden
+        </MenuItem>
+        <MenuItem href='/calendar' icon={<i className='ri-calendar-line' />}>
+          Jadwal Monitoring
+        </MenuItem>
+        <MenuItem href='/users' icon={<i className='ri-user-settings-line' />}>
+          Pengguna
         </MenuItem>
       </Menu>
-      {/* <Menu
-        rootStyles={menuRootStyles(theme)}
-        renderExpandIcon={({ level }) => <RenderExpandIcon level={level} />}
-        renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-fill' /> }}
-        menuItemStyles={menuItemStyles(theme, 'ri-circle-fill')}
-        popoutMenuOffset={{
-          mainAxis: ({ level }) => (level && level > 0 ? 4 : 14),
-          alignmentAxis: 0
-        }}
-        verticalMenuProps={{
-          menuItemStyles: verticalMenuItemStyles(verticalNavOptions, theme),
-          renderExpandIcon: ({ open }) => (
-            <RenderVerticalExpandIcon open={open} transitionDuration={transitionDuration} />
-          ),
-          renderExpandedMenuItemIcon: { icon: <i className='ri-circle-fill' /> }
-        }}
-      >
-        <GenerateHorizontalMenu menuData={menuData(dictionary)} />
-      </Menu> */}
     </HorizontalNav>
   )
 }

@@ -13,10 +13,17 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
 import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
 import { KanopiApi } from '@/libs/apiClient'
 
 interface UserItem {
+  rawId: string
   id: string
   name: string
   email: string
@@ -29,40 +36,94 @@ interface UserItem {
 export default function UsersPage() {
   const [users, setUsers] = useState<UserItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [openInvite, setOpenInvite] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<UserItem | null>(null)
+  const [newName, setNewName] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [newPhone, setNewPhone] = useState('')
+  const [newPassword, setNewPassword] = useState('Password123!')
+  const [submitting, setSubmitting] = useState(false)
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+
+  const fetchUsers = async () => {
+    setLoading(true)
+    try {
+      const res = await KanopiApi.getUsers()
+      if (res && Array.isArray(res) && res.length > 0) {
+        const mapped: UserItem[] = res.map((u: any, idx: number) => {
+          const membership = u.memberships?.[0]
+          const roleCode = membership?.role?.code || 'ADOPTER'
+          const orgName = membership?.organization?.name || 'Yayasan Kanopi Kita Indonesia'
+          return {
+            rawId: u.id,
+            id: u.id ? `USR-${u.id.substring(0, 8)}` : `USR-00${idx + 1}`,
+            name: u.name,
+            email: u.email,
+            role: roleCode,
+            organization: orgName,
+            verificationStatus: u.platformVerification || 'VERIFIED',
+            joinedDate: u.createdAt
+              ? new Date(u.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+              : '16 Nov 2026'
+          }
+        })
+        setUsers(mapped)
+      } else {
+        setUsers([])
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true)
-      try {
-        const res = await KanopiApi.getUsers()
-        if (res && Array.isArray(res) && res.length > 0) {
-          const mapped: UserItem[] = res.map((u: any, idx: number) => {
-            const membership = u.memberships?.[0]
-            const roleCode = membership?.role?.code || 'USER'
-            const orgName = membership?.organization?.name || 'Yayasan Kanopi Kita Indonesia'
-            return {
-              id: u.id ? `USR-${u.id.substring(0, 8)}` : `USR-00${idx + 1}`,
-              name: u.name,
-              email: u.email,
-              role: roleCode,
-              organization: orgName,
-              verificationStatus: u.platformVerification || 'VERIFIED',
-              joinedDate: u.createdAt ? new Date(u.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '16 Nov 2026'
-            }
-          })
-          setUsers(mapped)
-        } else {
-          setUsers([])
-        }
-      } catch (err) {
-        console.error('Error fetching users:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchUsers()
   }, [])
+
+  const handleInviteUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newName.trim() || !newEmail.trim()) return
+    setSubmitting(true)
+    setFeedback(null)
+    try {
+      await KanopiApi.createUser({
+        name: newName.trim(),
+        email: newEmail.trim(),
+        password: newPassword,
+        phone: newPhone.trim() || undefined
+      })
+      setOpenInvite(false)
+      setNewName('')
+      setNewEmail('')
+      setNewPhone('')
+      setFeedback({ type: 'success', message: `Pengguna baru (${newEmail}) berhasil ditambahkan ke Backend!` })
+      await fetchUsers()
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err?.message || 'Gagal membuat pengguna baru.' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleVerifyUser = async (status: 'VERIFIED' | 'REJECTED') => {
+    if (!selectedUser) return
+    setSubmitting(true)
+    try {
+      await KanopiApi.verifyUser(selectedUser.rawId, status)
+      setFeedback({
+        type: 'success',
+        message: `Status verifikasi akun ${selectedUser.name} berhasil diubah menjadi ${status}.`
+      })
+      setSelectedUser(null)
+      await fetchUsers()
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err?.message || 'Gagal memperbarui status verifikasi pengguna.' })
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -87,17 +148,24 @@ export default function UsersPage() {
             Manajemen Pengguna & Organisasi
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Verifikasi akun pemilik kawasan (Area Owner), penugasan tugas surveyor lapangan, dan pengelolaan hak akses (*RBAC*) terintegrasi Backend.
+            Verifikasi akun pemilik kawasan (Area Owner), penugasan surveyor lapangan, dan pengelolaan hak akses (*RBAC*) terintegrasi Backend (`/v1/users`).
           </Typography>
         </Box>
         <Button
           variant='contained'
           startIcon={<i className='ri-user-add-line' />}
+          onClick={() => setOpenInvite(true)}
           sx={{ bgcolor: '#176B4D', textTransform: 'none', fontWeight: 600, '&:hover': { bgcolor: '#104D39' } }}
         >
           Undang Pengguna Baru
         </Button>
       </Box>
+
+      {feedback && (
+        <Alert severity={feedback.type} onClose={() => setFeedback(null)} sx={{ borderRadius: '12px' }}>
+          {feedback.message}
+        </Alert>
+      )}
 
       <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
         <CardHeader
@@ -138,7 +206,7 @@ export default function UsersPage() {
                 users.map(u => {
                   const roleStyle = getRoleColor(u.role)
                   return (
-                    <TableRow key={u.id} hover>
+                    <TableRow key={u.rawId} hover>
                       <TableCell>
                         <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{u.name}</Typography>
                         <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{u.id}</Typography>
@@ -155,12 +223,19 @@ export default function UsersPage() {
                       <TableCell>
                         {u.verificationStatus === 'VERIFIED' ? (
                           <Chip label='Terverifikasi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
+                        ) : u.verificationStatus === 'REJECTED' ? (
+                          <Chip label='Ditolak' size='small' sx={{ bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 600 }} />
                         ) : (
                           <Chip label='Menunggu Persetujuan' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
                         )}
                       </TableCell>
                       <TableCell align='right'>
-                        <Button variant='outlined' size='small' sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none' }}>
+                        <Button
+                          variant='outlined'
+                          size='small'
+                          onClick={() => setSelectedUser(u)}
+                          sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none', fontWeight: 600 }}
+                        >
                           Kelola Izin
                         </Button>
                       </TableCell>
@@ -172,6 +247,110 @@ export default function UsersPage() {
           </Table>
         </TableContainer>
       </Card>
+
+      {/* Modal Undang Pengguna Baru */}
+      <Dialog open={openInvite} onClose={() => setOpenInvite(false)} maxWidth='sm' fullWidth>
+        <form onSubmit={handleInviteUser}>
+          <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+            Undang Pengguna Baru ke Platform
+          </DialogTitle>
+          <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TextField
+              fullWidth
+              label='Nama Lengkap Pengguna'
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              placeholder='Contoh: Rina Kusuma (Surveyor)'
+              required
+            />
+            <TextField
+              fullWidth
+              type='email'
+              label='Alamat Email Resmi'
+              value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+              placeholder='rina@kanopikita.id'
+              required
+            />
+            <TextField
+              fullWidth
+              label='Nomor Telepon (Opsional)'
+              value={newPhone}
+              onChange={e => setNewPhone(e.target.value)}
+              placeholder='+628123456789'
+            />
+            <TextField
+              fullWidth
+              label='Kata Sandi Awal'
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
+              required
+            />
+          </DialogContent>
+          <DialogActions sx={{ p: 3 }}>
+            <Button onClick={() => setOpenInvite(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+              Batal
+            </Button>
+            <Button
+              type='submit'
+              variant='contained'
+              disabled={submitting}
+              sx={{ bgcolor: '#176B4D', color: '#ffffff', textTransform: 'none', fontWeight: 600 }}
+            >
+              {submitting ? 'Menyimpan...' : 'Buat Akun Pengguna'}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      {/* Modal Kelola Izin & Verifikasi */}
+      <Dialog open={Boolean(selectedUser)} onClose={() => setSelectedUser(null)} maxWidth='sm' fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+          Kelola Verifikasi & Hak Akses Akun
+        </DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {selectedUser && (
+            <>
+              <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
+                <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
+                  {selectedUser.name}
+                </Typography>
+                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                  Email: {selectedUser.email} • Role: {selectedUser.role}
+                </Typography>
+              </Box>
+              <Typography variant='body2' sx={{ color: '#66756D' }}>
+                Organisasi Terdaftar: <strong>{selectedUser.organization}</strong>
+              </Typography>
+              <Typography variant='body2' sx={{ color: '#66756D' }}>
+                Status Verifikasi Saat Ini: <strong>{selectedUser.verificationStatus}</strong>
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, gap: 1 }}>
+          <Button onClick={() => setSelectedUser(null)} sx={{ textTransform: 'none', color: '#66756D' }}>
+            Tutup
+          </Button>
+          <Button
+            variant='outlined'
+            color='error'
+            disabled={submitting}
+            onClick={() => handleVerifyUser('REJECTED')}
+            sx={{ textTransform: 'none' }}
+          >
+            Tangguhkan / Tolak
+          </Button>
+          <Button
+            variant='contained'
+            disabled={submitting}
+            onClick={() => handleVerifyUser('VERIFIED')}
+            sx={{ bgcolor: '#176B4D', color: '#ffffff', textTransform: 'none', fontWeight: 600 }}
+          >
+            Setujui Verifikasi (VERIFIED)
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

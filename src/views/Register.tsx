@@ -14,7 +14,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Divider from '@mui/material/Divider'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import Alert from '@mui/material/Alert'
@@ -28,6 +27,7 @@ import type { Mode } from '@core/types'
 // Component Imports
 import Link from '@components/Link'
 import Logo from '@components/layout/shared/Logo'
+import { KanopiApi } from '@/libs/apiClient'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
@@ -42,12 +42,13 @@ const Register = ({ mode }: { mode: Mode }) => {
   const [organization, setOrganization] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [accountType, setAccountType] = useState('AREA_OWNER')
+  const [accountType, setAccountType] = useState('ADOPTER')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-2-dark.png'
@@ -72,12 +73,32 @@ const Register = ({ mode }: { mode: Mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSuccessMsg(true)
-    setTimeout(() => {
-      router.push('/login')
-    }, 1500)
+    setErrorMsg(null)
+
+    if (password.length < 8) {
+      setErrorMsg('Kata sandi minimal 8 karakter.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      await KanopiApi.registerAdopter({
+        name: organization ? `${fullName} (${organization})` : fullName,
+        email,
+        password,
+        phone: phone || undefined
+      })
+      setSuccessMsg(true)
+      setTimeout(() => {
+        router.push('/login')
+      }, 1500)
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Gagal mendaftarkan akun ke Backend. Pastikan email belum terdaftar.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -99,10 +120,10 @@ const Register = ({ mode }: { mode: Mode }) => {
           />
           <Box className='text-center mbs-6'>
             <Typography variant='h5' sx={{ fontWeight: 700, color: '#176B4D', mb: 1 }}>
-              Daftarkan Kawasan Konservasi Anda
+              Daftarkan Kawasan & Akun Konservasi Anda
             </Typography>
             <Typography variant='body2' sx={{ color: '#66756D', maxWidth: 440 }}>
-              Bergabung bersama 12+ pengelola hutan adat, taman nasional, dan pesisir mangrove untuk transparansi data adopsi dan verifikasi pohon.
+              Terhubung langsung dengan ekosistem database spasial PostGIS Kanopi Kita untuk transparansi data adopsi dan verifikasi pohon.
             </Typography>
           </Box>
         </div>
@@ -127,7 +148,13 @@ const Register = ({ mode }: { mode: Mode }) => {
 
           {successMsg && (
             <Alert severity='success' sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 600 }}>
-              Pendaftaran berhasil! Mengalihkan Anda ke halaman login...
+              Pendaftaran berhasil disimpan ke Backend! Mengalihkan Anda ke halaman login...
+            </Alert>
+          )}
+
+          {errorMsg && (
+            <Alert severity='error' sx={{ borderRadius: '8px' }}>
+              {errorMsg}
             </Alert>
           )}
 
@@ -140,8 +167,8 @@ const Register = ({ mode }: { mode: Mode }) => {
               onChange={e => setAccountType(e.target.value)}
               helperText='Pilih peran sesuai tanggung jawab Anda'
             >
+              <MenuItem value='ADOPTER'>🌱 Adopter Pohon / Mitra CSR</MenuItem>
               <MenuItem value='AREA_OWNER'>🌲 Pengelola Kawasan / Lembaga Hutan Adat</MenuItem>
-              <MenuItem value='CORPORATE_ADOPTER'>🏢 Mitra Korporasi / Organisasi Adopter</MenuItem>
               <MenuItem value='SURVEYOR'>🧭 Surveyor Mandiri Lapangan</MenuItem>
             </TextField>
 
@@ -156,11 +183,10 @@ const Register = ({ mode }: { mode: Mode }) => {
 
             <TextField
               fullWidth
-              label='Nama Lembaga / Kawasan / Komunitas'
+              label='Nama Lembaga / Kawasan / Komunitas (Opsional)'
               value={organization}
               onChange={e => setOrganization(e.target.value)}
-              placeholder='Contoh: LPHA Hutan Adat Merangin'
-              required
+              placeholder='Contoh: Yayasan Kanopi Kita Indonesia'
             />
 
             <TextField
@@ -169,7 +195,7 @@ const Register = ({ mode }: { mode: Mode }) => {
               type='email'
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder='kontak@organisasi.or.id'
+              placeholder='nama@organisasi.or.id'
               required
             />
 
@@ -178,12 +204,12 @@ const Register = ({ mode }: { mode: Mode }) => {
               label='Nomor Telepon / WhatsApp'
               value={phone}
               onChange={e => setPhone(e.target.value)}
-              placeholder='+62 812-3456-7890'
+              placeholder='+6281234567890'
             />
 
             <TextField
               fullWidth
-              label='Kata Sandi'
+              label='Kata Sandi (Minimal 8 Karakter)'
               value={password}
               onChange={e => setPassword(e.target.value)}
               type={isPasswordShown ? 'text' : 'password'}
@@ -228,7 +254,7 @@ const Register = ({ mode }: { mode: Mode }) => {
               variant='contained'
               type='submit'
               size='large'
-              disabled={!agreeTerms}
+              disabled={!agreeTerms || loading}
               sx={{
                 bgcolor: '#176B4D',
                 color: '#ffffff',
@@ -240,7 +266,7 @@ const Register = ({ mode }: { mode: Mode }) => {
                 '&:hover': { bgcolor: '#104D39' }
               }}
             >
-              Daftar Akun Sekarang
+              {loading ? 'Memproses Pendaftaran...' : 'Daftar Akun Sekarang'}
             </Button>
 
             <div className='flex justify-center items-center flex-wrap gap-1.5 mbs-2'>
