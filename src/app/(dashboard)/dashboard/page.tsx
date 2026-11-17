@@ -103,7 +103,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%' }}>
       {/* Top Banner / Welcome Section */}
       <Card
         sx={{
@@ -222,7 +222,7 @@ export default function DashboardPage() {
       <Grid container spacing={5} sx={{ width: '100%', m: 0 }}>
         {/* Table: Antrean Review Survei Lapangan */}
         <Grid size={{ xs: 12, lg: 8 }}>
-          <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+          <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
             <CardHeader
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
@@ -327,7 +327,7 @@ export default function DashboardPage() {
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
             {/* Quick Actions Card */}
-            <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+            <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
               <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Aksi Cepat Operasional</Typography>} />
               <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Button
@@ -379,7 +379,7 @@ export default function DashboardPage() {
             </Card>
 
             {/* Health Distribution Card */}
-            <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+            <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
               <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Distribusi Kondisi Pohon</Typography>} />
               <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <Box>

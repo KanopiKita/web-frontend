@@ -92,7 +92,7 @@ export default function CarbonCertificatesPage() {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>

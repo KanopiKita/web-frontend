@@ -16,8 +16,12 @@ const StyledVerticalNav = styled.aside<StyledVerticalNavProps>`
     !scrollWithContent &&
     `
     position: sticky;
+    top: 0;
     inset-block-start: 0;
     block-size: 100dvh;
+    max-block-size: 100dvh;
+    align-self: flex-start;
+    flex-shrink: 0;
   `}
   z-index: 9;
 

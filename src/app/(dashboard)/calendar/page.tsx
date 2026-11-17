@@ -138,7 +138,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -176,7 +176,7 @@ export default function CalendarPage() {
         <Grid container spacing={5} sx={{ width: '100%', m: 0 }}>
           {scheduleItems.map(item => (
             <Grid key={item.id} size={{ xs: 12, md: 4 }}>
-              <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', height: '100%', overflow: 'hidden', maxWidth: '100%' }}>
+              <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', height: '100%', maxWidth: '100%' }}>
                 <CardContent sx={{ p: 4, display: 'flex', flexDirection: 'column', height: '100%' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Chip

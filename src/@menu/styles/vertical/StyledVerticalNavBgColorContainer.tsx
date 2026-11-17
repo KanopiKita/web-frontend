@@ -9,11 +9,11 @@ type StyledVerticalNavBgColorContainerProps = Pick<VerticalNavProps, 'background
 const StyledVerticalNavBgColorContainer = styled.div<StyledVerticalNavBgColorContainerProps>`
   position: relative;
   block-size: 100%;
+  max-block-size: 100dvh;
   z-index: 3;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   ${({ backgroundColor }) => backgroundColor && `background-color:${backgroundColor};`}
 `
 

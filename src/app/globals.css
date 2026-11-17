@@ -103,13 +103,12 @@ html {
   display: flex;
   inline-size: 100%;
   min-block-size: 100%;
-  overflow-x: hidden;
 }
 
 body {
   inline-size: 100%;
   min-block-size: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 
@@ -143,7 +142,7 @@ body {
 
 .MuiCard-root {
   max-width: 100%;
-  overflow: hidden;
+  flex-shrink: 0;
   border-color: var(--mui-palette-divider) !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
 }

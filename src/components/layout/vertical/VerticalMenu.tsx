@@ -83,8 +83,8 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   const hideFooterDetails = !isBreakpointReached && isCollapsed && !isHovered
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 0%', minHeight: 0, overflow: 'hidden' }}>
+      <Box sx={{ flex: '1 1 0%', minHeight: 0, overflow: 'hidden' }}>
         <ScrollWrapper
           {...(isBreakpointReached
             ? {

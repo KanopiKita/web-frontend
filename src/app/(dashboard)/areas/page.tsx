@@ -214,7 +214,7 @@ export default function AreasPage() {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%' }}>
       {/* Page Title */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
@@ -242,12 +242,12 @@ export default function AreasPage() {
       )}
 
       {/* Interactive Mapbox WebGIS Viewer Card */}
-      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
         <KanopiWebGisMap areas={areas} trees={trees} selectedAreaId={selectedAreaId} />
       </Card>
 
       {/* Areas Table */}
-      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
         <CardHeader
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

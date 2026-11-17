@@ -122,7 +122,7 @@ export default function SurveysPage() {
   const approvedColumns = surveys.filter(s => s.reviewStatus === 'APPROVED')
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
@@ -352,7 +352,7 @@ export default function SurveysPage() {
         </Grid>
       ) : (
         /* Table View */
-        <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+        <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
           <CardHeader
             title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

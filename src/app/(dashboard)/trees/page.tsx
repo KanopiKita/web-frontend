@@ -121,7 +121,7 @@ export default function TreesPage() {
   })
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
@@ -158,7 +158,7 @@ export default function TreesPage() {
       </Box>
 
       {/* Main Table Card */}
-      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', maxWidth: '100%' }}>
         <Box sx={{ p: 4, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pohon Terdaftar</Typography>

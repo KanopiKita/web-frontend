@@ -16,6 +16,7 @@ const StyledMain = styled.main<StyledMainProps>`
   inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
+  flex: 1 0 auto;
   box-sizing: border-box;
 
   ${({ isContentCompact }) =>

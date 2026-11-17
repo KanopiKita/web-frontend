@@ -48,8 +48,18 @@ const StyledHeader = styled.header<StyledHeaderProps>`
 
   &.${verticalLayoutClasses.headerFixed} {
     position: sticky;
+    top: 0;
     inset-block-start: 0;
     z-index: var(--header-z-index);
+    backdrop-filter: blur(10px);
+    background-color: rgb(var(--mui-palette-background-defaultChannel) / 0.88);
+
+    & .${verticalLayoutClasses.navbar} {
+      background-color: rgb(var(--background-color-rgb) / 0.92);
+      backdrop-filter: blur(10px);
+      border-block-end: 1px solid var(--mui-palette-divider);
+      padding-inline: ${themeConfig.layoutPadding}px;
+    }
 
     &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerAttached},
       &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerDetached}
