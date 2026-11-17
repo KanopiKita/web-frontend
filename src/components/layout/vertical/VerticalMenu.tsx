@@ -1,5 +1,6 @@
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
+import Chip from '@mui/material/Chip'
 
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -36,18 +37,13 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
 )
 
 const VerticalMenu = ({ scrollMenu }: Props) => {
-  // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
-
-  // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
   return (
-    // eslint-disable-next-line lines-around-comment
-    /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
     <ScrollWrapper
       {...(isBreakpointReached
         ? {
@@ -59,8 +55,6 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
             onScrollY: container => scrollMenu(container, true)
           })}
     >
-      {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
-      {/* Vertical Menu */}
       <Menu
         popoutMenuOffset={{ mainAxis: 17 }}
         menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
@@ -79,7 +73,11 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
           <MenuItem href='/trees' icon={<i className='ri-plant-line' />}>
             Inventaris & Review Pohon
           </MenuItem>
-          <MenuItem href='/surveys' icon={<i className='ri-file-list-3-line' />}>
+          <MenuItem
+            href='/surveys'
+            icon={<i className='ri-file-list-3-line' />}
+            suffix={<Chip label='2' size='small' sx={{ height: 20, fontSize: '0.68rem', bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />}
+          >
             Hasil Survei Lapangan
           </MenuItem>
         </MenuSection>
@@ -94,35 +92,45 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         </MenuSection>
 
         <MenuSection label='OPERASIONAL & TIM'>
-          <MenuItem href='/incidents' icon={<i className='ri-alarm-warning-line' />}>
+          <MenuItem
+            href='/incidents'
+            icon={<i className='ri-alarm-warning-line' />}
+            suffix={<Chip label='2' size='small' sx={{ height: 20, fontSize: '0.68rem', bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 700 }} />}
+          >
             Triage Insiden Pohon
           </MenuItem>
           <MenuItem href='/calendar' icon={<i className='ri-calendar-line' />}>
             Jadwal Monitoring
           </MenuItem>
           <MenuItem href='/users' icon={<i className='ri-user-settings-line' />}>
-            Pengguna & Organisasi
+            Pengguna & RBAC
           </MenuItem>
         </MenuSection>
 
-        <MenuSection label='AUTENTIKASI & AKUN'>
-          <MenuItem href='/login' target='_blank' icon={<i className='ri-login-box-line' />}>
-            Halaman Masuk (Login)
+        <MenuSection label='MASTER DATA & SKEMA'>
+          <MenuItem href='/master/species' icon={<i className='ri-seedling-line' />}>
+            Master Spesies Pohon
           </MenuItem>
-          <MenuItem href='/register' target='_blank' icon={<i className='ri-user-add-line' />}>
-            Daftar Akun Baru (Register)
+          <MenuItem href='/master/form-templates' icon={<i className='ri-survey-line' />}>
+            Template Form Survei
+          </MenuItem>
+          <MenuItem href='/master/organizations' icon={<i className='ri-building-2-line' />}>
+            Organisasi & Mitra
+          </MenuItem>
+        </MenuSection>
+
+        <MenuSection label='PENGATURAN & KREDENSIAL'>
+          <MenuItem href='/settings/account' icon={<i className='ri-shield-user-line' />}>
+            Kelola Akun & Profil
+          </MenuItem>
+          <MenuItem href='/settings/system' icon={<i className='ri-key-2-line' />}>
+            Kredensial Map & Sistem
+          </MenuItem>
+          <MenuItem href='/login' icon={<i className='ri-login-box-line' />}>
+            Ganti Sesi Login
           </MenuItem>
         </MenuSection>
       </Menu>
-      {/* <Menu
-        popoutMenuOffset={{ mainAxis: 17 }}
-        menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
-        renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
-        renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-fill' /> }}
-        menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
-      >
-        <GenerateVerticalMenu menuData={menuData(dictionary, params)} />
-      </Menu> */}
     </ScrollWrapper>
   )
 }

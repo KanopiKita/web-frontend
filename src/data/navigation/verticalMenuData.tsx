@@ -43,9 +43,34 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
     icon: 'ri-calendar-line'
   },
   {
-    label: 'Pengguna & Organisasi',
+    label: 'Pengguna & RBAC',
     href: '/users',
     icon: 'ri-user-settings-line'
+  },
+  {
+    label: 'Master Spesies Pohon',
+    href: '/master/species',
+    icon: 'ri-seedling-line'
+  },
+  {
+    label: 'Template Form Survei',
+    href: '/master/form-templates',
+    icon: 'ri-survey-line'
+  },
+  {
+    label: 'Organisasi & Mitra',
+    href: '/master/organizations',
+    icon: 'ri-building-2-line'
+  },
+  {
+    label: 'Kelola Akun & Profil',
+    href: '/settings/account',
+    icon: 'ri-shield-user-line'
+  },
+  {
+    label: 'Kredensial Map & Sistem',
+    href: '/settings/system',
+    icon: 'ri-key-2-line'
   }
 ]
 

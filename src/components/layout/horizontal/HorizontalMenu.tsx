@@ -100,6 +100,21 @@ const HorizontalMenu = () => {
         <MenuItem href='/users' icon={<i className='ri-user-settings-line' />}>
           Pengguna
         </MenuItem>
+        <MenuItem href='/master/species' icon={<i className='ri-seedling-line' />}>
+          Master Spesies
+        </MenuItem>
+        <MenuItem href='/master/form-templates' icon={<i className='ri-survey-line' />}>
+          Form Survei
+        </MenuItem>
+        <MenuItem href='/master/organizations' icon={<i className='ri-building-2-line' />}>
+          Organisasi
+        </MenuItem>
+        <MenuItem href='/settings/account' icon={<i className='ri-shield-user-line' />}>
+          Akun
+        </MenuItem>
+        <MenuItem href='/settings/system' icon={<i className='ri-key-2-line' />}>
+          Sistem & Map
+        </MenuItem>
       </Menu>
     </HorizontalNav>
   )

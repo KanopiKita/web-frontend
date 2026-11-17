@@ -100,7 +100,6 @@ export async function apiRequest<T = any>(endpoint: string, options: ApiRequestO
 
   let resolvedToken = token || (typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined)
 
-  // Jika endpoint membutuhkan auth dan belum ada token di browser, inisialisasi sesi otomatis (kecuali endpoint auth/login)
   if (!resolvedToken && typeof window !== 'undefined' && !endpoint.includes('/auth/login') && !endpoint.includes('/adopters/register')) {
     resolvedToken = (await ensureValidToken()) || undefined
   }
@@ -174,10 +173,37 @@ export const KanopiApi = {
   createUser: (payload: { email: string; name: string; password: string; phone?: string }, token?: string) =>
     apiRequest('/users', { method: 'POST', body: JSON.stringify(payload), token }),
 
+  updateUser: (userId: string, payload: { name?: string; phone?: string; password?: string }, token?: string) =>
+    apiRequest(`/users/${userId}`, { method: 'PATCH', body: JSON.stringify(payload), token }),
+
   verifyUser: (userId: string, status: 'VERIFIED' | 'REJECTED', token?: string) =>
     apiRequest(`/users/${userId}/verify`, { method: 'PATCH', body: JSON.stringify({ status }), token }),
 
-  // 2. Kawasan Konservasi & Batas WebGIS (Area Module)
+  getRoles: (token?: string) =>
+    apiRequest<any[]>('/roles', { token }),
+
+  // 2. Organizations & Mitra
+  getOrganizations: (token?: string) =>
+    apiRequest<any[]>('/organizations', { token }),
+
+  createOrganization: (
+    payload: {
+      name: string
+      type: 'COMMUNITY' | 'NGO' | 'GOVERNMENT' | 'CORPORATE'
+      contact?: { email?: string; phone?: string; website?: string; address?: string }
+    },
+    token?: string
+  ) =>
+    apiRequest('/organizations', { method: 'POST', body: JSON.stringify(payload), token }),
+
+  verifyOrganization: (orgId: string, verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED', token?: string) =>
+    apiRequest(`/organizations/${orgId}/verify`, {
+      method: 'PATCH',
+      body: JSON.stringify({ verification_status: verificationStatus }),
+      token
+    }),
+
+  // 3. Kawasan Konservasi & Batas WebGIS (Area Module)
   getAdminAreas: (token?: string) =>
     apiRequest<any[]>('/admin/areas', { token }),
 
@@ -193,7 +219,7 @@ export const KanopiApi = {
   publishArea: (areaId: string, token?: string) =>
     apiRequest(`/admin/areas/${areaId}/publish`, { method: 'POST', token }),
 
-  // 3. Inventaris & Review Pohon (Registry & Review Module)
+  // 4. Inventaris & Review Pohon (Registry & Review Module)
   getAdminTrees: (params?: { area_id?: string; lifecycle_status?: string; adoption_status?: string; page?: number; limit?: number }, token?: string) => {
     const query = new URLSearchParams()
     if (params?.area_id) query.append('area_id', params.area_id)
@@ -230,17 +256,26 @@ export const KanopiApi = {
   updateTreeAvailability: (treeId: string, status: 'ELIGIBLE' | 'AVAILABLE' | 'RESERVED' | 'ADOPTED' | 'UNAVAILABLE', token?: string) =>
     apiRequest(`/admin/trees/${treeId}/availability`, { method: 'PATCH', body: JSON.stringify({ status }), token }),
 
-  // 4. Adopsi & Transaksi (Commerce Module)
+  // 5. Adopsi & Transaksi (Commerce Module)
   getAdoptionPackages: (token?: string) =>
     apiRequest<any[]>('/adoption-packages', { token }),
 
   getMyAdoptions: (token?: string) =>
     apiRequest<any[]>('/me/adoptions', { token }),
 
+  createAdoptionOrder: (payload: { tree_id: string; package_id: string; org_id?: string }, token?: string) =>
+    apiRequest('/adoption-orders', { method: 'POST', body: JSON.stringify(payload), token }),
+
+  simulatePaymentWebhook: (provider: 'midtrans' | 'xendit', orderNo: string) =>
+    apiRequest(`/webhooks/payments/${provider}`, {
+      method: 'POST',
+      body: JSON.stringify({ order_id: orderNo, transaction_status: 'settlement' })
+    }),
+
   verifyCertificateToken: (tokenString: string) =>
     apiRequest(`/certificates/verify/${encodeURIComponent(tokenString)}`),
 
-  // 5. Penugasan Lapangan & Jadwal (Assignment Module)
+  // 6. Penugasan Lapangan & Jadwal (Assignment Module)
   getAdminAssignments: (status?: string, token?: string) => {
     const qs = status ? `?status=${encodeURIComponent(status)}` : ''
     return apiRequest<any[]>(`/admin/assignments${qs}`, { token })
@@ -266,7 +301,7 @@ export const KanopiApi = {
       token
     }),
 
-  // 6. Insiden & Triage Pohon (Incident Module)
+  // 7. Insiden & Triage Pohon (Incident Module)
   getAdminIncidents: (token?: string) =>
     apiRequest<any[]>('/admin/incidents', { token }),
 
@@ -276,14 +311,31 @@ export const KanopiApi = {
   ) =>
     apiRequest('/incidents', { method: 'POST', body: JSON.stringify(payload), token }),
 
-  // 7. Master Data (Species & Form Template)
+  // 8. Master Data (Species & Form Template)
   getMasterSpecies: (token?: string) =>
     apiRequest<any[]>('/species', { token }),
 
-  createSpecies: (payload: { local_name: string; scientific_name: string; family?: string; iucn_status?: string }, token?: string) =>
+  createSpecies: (
+    payload: { local_name: string; scientific_name: string; family?: string; native?: boolean; iucn_status?: string },
+    token?: string
+  ) =>
     apiRequest('/admin/species', { method: 'POST', body: JSON.stringify(payload), token }),
 
-  // 8. Aggregated Dashboard Overview
+  getAdminFormTemplates: (token?: string) =>
+    apiRequest<any[]>('/admin/form-templates', { token }),
+
+  createFormTemplate: (
+    payload: {
+      task_type: string
+      version: number
+      schema: Record<string, any>
+      evidence_rules?: Record<string, any>
+    },
+    token?: string
+  ) =>
+    apiRequest('/admin/form-templates', { method: 'POST', body: JSON.stringify(payload), token }),
+
+  // 9. Aggregated Dashboard Overview
   getDashboardAggregates: async (token?: string) => {
     try {
       const [areasRes, treesRes, reviewQueueRes, incidentsRes] = await Promise.all([

@@ -177,21 +177,21 @@ const UserDropdown = () => {
                     </div>
                   </div>
                   <Divider className='mlb-1' />
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/settings/account')}>
+                    <i className='ri-shield-user-line' />
+                    <Typography color='text.primary'>Kelola Akun & Profil</Typography>
+                  </MenuItem>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/settings/system')}>
+                    <i className='ri-key-2-line' />
+                    <Typography color='text.primary'>Kredensial Map & Sistem</Typography>
+                  </MenuItem>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/master/species')}>
+                    <i className='ri-seedling-line' />
+                    <Typography color='text.primary'>Master Spesies & Form</Typography>
+                  </MenuItem>
                   <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/users')}>
                     <i className='ri-user-settings-line' />
-                    <Typography color='text.primary'>Manajemen Akun & RBAC</Typography>
-                  </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/areas')}>
-                    <i className='ri-map-pin-line' />
-                    <Typography color='text.primary'>Kawasan Konservasi</Typography>
-                  </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/adoptions')}>
-                    <i className='ri-hand-heart-line' />
-                    <Typography color='text.primary'>Paket & Transaksi Adopsi</Typography>
-                  </MenuItem>
-                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/about')}>
-                    <i className='ri-information-line' />
-                    <Typography color='text.primary'>Tentang Platform</Typography>
+                    <Typography color='text.primary'>Manajemen Pengguna & RBAC</Typography>
                   </MenuItem>
                   <div className='flex items-center plb-1.5 pli-4'>
                     <Button

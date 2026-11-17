@@ -113,16 +113,58 @@ body {
   max-width: 100vw;
 }
 
-/* Global Container & Table Overflow Fixes */
+/* Global Container, Card, Dialog & Table Spacing Polish (Kanopi Kita Design System v2.0) */
 .MuiTableContainer-root {
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
+.MuiTableCell-root {
+  padding: 15px 22px !important;
+  border-bottom: 1px solid #EDF2EE !important;
+}
+
+.MuiTableCell-head {
+  padding: 13px 22px !important;
+  font-size: 0.76rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  color: #485B50 !important;
+  background-color: #F6FAF7 !important;
+  border-bottom: 1px solid #DFE7E0 !important;
+}
+
+.MuiTableRow-root.MuiTableRow-hover:hover {
+  background-color: #F4FAF6 !important;
+}
+
 .MuiCard-root {
   max-width: 100%;
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(23, 37, 30, 0.04) !important;
+}
+
+.MuiCardHeader-root {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #EDF2EE;
+}
+
+.MuiCardContent-root {
+  padding: 24px !important;
+}
+
+.MuiDialogTitle-root {
+  padding: 20px 26px !important;
+}
+
+.MuiDialogContent-root {
+  padding: 24px 26px !important;
+  padding-top: 24px !important;
+}
+
+.MuiDialogActions-root {
+  padding: 16px 26px !important;
 }
 
 .MuiGrid2-container {

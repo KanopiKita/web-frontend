@@ -411,11 +411,20 @@ export default function DashboardPage() {
                 <Button
                   variant='outlined'
                   fullWidth
-                  href='/carbon-certificates'
-                  startIcon={<i className='ri-file-chart-line' />}
+                  href='/master/species'
+                  startIcon={<i className='ri-seedling-line' />}
                   sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: '#17251E', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
-                  Laporan Akumulasi Karbon (PDF)
+                  Kelola Master Spesies & Skema Form
+                </Button>
+                <Button
+                  variant='outlined'
+                  fullWidth
+                  href='/settings/system'
+                  startIcon={<i className='ri-key-2-line' />}
+                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: '#176B4D', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                >
+                  Kredensial Mapbox & Pengaturan API
                 </Button>
               </CardContent>
             </Card>
