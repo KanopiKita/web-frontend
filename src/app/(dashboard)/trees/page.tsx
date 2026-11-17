@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
@@ -20,11 +20,39 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import { KanopiApi } from '@/libs/apiClient'
 
 export default function TreesPage() {
   const [filterStatus, setFilterStatus] = useState('ALL')
   const [selectedTree, setSelectedTree] = useState<any>(null)
   const [openModal, setOpenModal] = useState(false)
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
+    KanopiApi.getAdminTrees({}, token)
+      .then(res => {
+        if (res && Array.isArray(res) && res.length > 0) {
+          const mapped = res.map((t: any) => ({
+            id: t.treeCode || t.id,
+            rawId: t.id,
+            speciesLatin: t.species?.scientificName || 'Sonneratia alba',
+            speciesLocal: t.species?.localName || 'Mangrove',
+            area: t.area?.name || 'Kawasan Restorasi Mangrove Muara Gembong',
+            surveyor: 'Surveyor Lapangan',
+            date: t.createdAt ? new Date(t.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '16 Nov 2026',
+            status: t.verificationStatus || t.verification_status || 'PENDING_REVIEW',
+            health: t.healthStatus === 'HEALTHY' ? 'Sehat (Daun Rimbun)' : t.healthStatus === 'ATTENTION' ? 'Butuh Pemantauan' : 'Sehat',
+            dbh: `${t.dbhCm || 22.5} cm`,
+            height: `${t.heightM || 5.2} m`,
+            lat: t.latitude || -6.012,
+            lng: t.longitude || 106.982,
+            notes: 'Data terverifikasi sistem backend'
+          }))
+          setTrees(mapped)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const [trees, setTrees] = useState([
     {

@@ -28,6 +28,7 @@ import type { Mode } from '@core/types'
 // Component Imports
 import Link from '@components/Link'
 import Logo from '@components/layout/shared/Logo'
+import { KanopiApi } from '@/libs/apiClient'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
@@ -38,11 +39,13 @@ import { useSettings } from '@core/hooks/useSettings'
 
 const LoginV2 = ({ mode }: { mode: Mode }) => {
   // States
-  const [email, setEmail] = useState('admin@kanopiindonesia.id')
-  const [password, setPassword] = useState('KanopiAdmin2026!')
+  const [email, setEmail] = useState('admin@kanopikita.id')
+  const [password, setPassword] = useState('Password123!')
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [selectedRole, setSelectedRole] = useState<'admin' | 'area_owner' | 'surveyor'>('admin')
   const [rememberMe, setRememberMe] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-1-dark.png'
@@ -69,22 +72,37 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
 
   const handleRolePreset = (role: 'admin' | 'area_owner' | 'surveyor') => {
     setSelectedRole(role)
+    setError(null)
     if (role === 'admin') {
-      setEmail('admin@kanopiindonesia.id')
-      setPassword('KanopiAdmin2026!')
+      setEmail('admin@kanopikita.id')
+      setPassword('Password123!')
     } else if (role === 'area_owner') {
-      setEmail('lpha.merangin@kanopiindonesia.id')
-      setPassword('HutanAdat2026!')
+      setEmail('owner@kanopikita.id')
+      setPassword('Password123!')
     } else {
-      setEmail('surveyor.pantura@kanopiindonesia.id')
-      setPassword('SurveyorPantura2026!')
+      setEmail('surveyor@kanopikita.id')
+      setPassword('Password123!')
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulated instant login redirect to dashboard
-    router.push('/dashboard')
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await KanopiApi.login({ email, password })
+      if (res?.access_token) {
+        localStorage.setItem('access_token', res.access_token)
+        localStorage.setItem('refresh_token', res.refresh_token)
+        localStorage.setItem('user', JSON.stringify(res.user))
+        document.cookie = `access_token=${res.access_token}; path=/; max-age=86400`
+      }
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err?.message || 'Gagal masuk. Periksa email dan kata sandi Anda.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -172,13 +190,19 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
           </Box>
 
           <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-4'>
+            {error && (
+              <Alert severity='error' sx={{ borderRadius: '8px' }}>
+                {error}
+              </Alert>
+            )}
+
             <TextField
               autoFocus
               fullWidth
               label='Email atau Username'
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder='contoh@kanopiindonesia.id'
+              placeholder='contoh@kanopikita.id'
             />
 
             <TextField
@@ -232,6 +256,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
               variant='contained'
               type='submit'
               size='large'
+              disabled={loading}
               sx={{
                 bgcolor: '#176B4D',
                 color: '#ffffff',
@@ -243,7 +268,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
                 '&:hover': { bgcolor: '#104D39' }
               }}
             >
-              Masuk ke Dashboard
+              {loading ? 'Memproses Masuk...' : 'Masuk ke Dashboard'}
             </Button>
 
             <div className='flex justify-center items-center flex-wrap gap-1.5 mbs-2'>

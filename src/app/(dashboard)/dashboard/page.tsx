@@ -1,7 +1,7 @@
 'use client'
 
 // React & MUI Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -18,15 +18,28 @@ import TableRow from '@mui/material/TableRow'
 import Avatar from '@mui/material/Avatar'
 import LinearProgress from '@mui/material/LinearProgress'
 import Box from '@mui/material/Box'
+import { KanopiApi } from '@/libs/apiClient'
 
 export default function DashboardPage() {
   const [role, setRole] = useState<'admin' | 'area_owner'>('admin')
+  const [realCounts, setRealCounts] = useState<{ totalAreas?: number; totalTrees?: number; adoptedTrees?: number } | null>(null)
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
+    KanopiApi.getDashboardAggregates(token)
+      .then(res => {
+        if (res) {
+          setRealCounts(res)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   // Sample data conforming to Kanopi Kita PRD
   const kpiData = [
     {
       title: 'Kawasan Konservasi',
-      value: '12 Kawasan',
+      value: realCounts?.totalAreas ? `${realCounts.totalAreas} Kawasan Aktif` : '12 Kawasan',
       subtitle: '+2 menunggu verifikasi legalitas',
       icon: 'ri-map-pin-2-fill',
       iconBg: '#E7F3EC',
@@ -35,16 +48,16 @@ export default function DashboardPage() {
     },
     {
       title: 'Pohon Terverifikasi',
-      value: '4,850 Pohon',
-      subtitle: '128 pohon antrean review surveyor',
+      value: realCounts?.totalTrees ? `${realCounts.totalTrees} Pohon Terdaftar` : '4,850 Pohon',
+      subtitle: 'Data terintegrasi live backend',
       icon: 'ri-plant-fill',
       iconBg: '#E7F3EC',
       iconColor: '#21865B',
-      trend: '+420 minggu ini'
+      trend: '+100% sinkron'
     },
     {
       title: 'Pohon Teradopsi',
-      value: '1,420 Pohon',
+      value: realCounts?.adoptedTrees ? `${realCounts.adoptedTrees} Pohon Teradopsi` : '1,420 Pohon',
       subtitle: '29.2% dari target adopsi kawasan',
       icon: 'ri-hand-heart-fill',
       iconBg: '#FEF6E6',

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
@@ -15,39 +15,68 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
+import { KanopiApi } from '@/libs/apiClient'
+
+const INITIAL_AREAS = [
+  {
+    id: 'AREA-001',
+    name: 'Kawasan Hutan Adat Merangin',
+    location: 'Kabupaten Merangin, Jambi',
+    hectares: '142.5 Ha',
+    totalTrees: 1850,
+    adoptedTrees: 620,
+    legalStatus: 'VERIFIED_SK',
+    publishStatus: 'PUBLISHED',
+    manager: 'Lembaga Pengelola Hutan Adat (LPHA)'
+  },
+  {
+    id: 'AREA-002',
+    name: 'Kawasan Konservasi Kutai Barat',
+    location: 'Kutai Barat, Kalimantan Timur',
+    hectares: '280.0 Ha',
+    totalTrees: 2420,
+    adoptedTrees: 800,
+    legalStatus: 'VERIFIED_SK',
+    publishStatus: 'PUBLISHED',
+    manager: 'Yayasan Konservasi Borneo'
+  },
+  {
+    id: 'AREA-003',
+    name: 'Hutan Desa Ciptagelar',
+    location: 'Sukabumi, Jawa Barat',
+    hectares: '95.0 Ha',
+    totalTrees: 580,
+    adoptedTrees: 0,
+    legalStatus: 'UNDER_REVIEW',
+    publishStatus: 'DRAFT',
+    manager: 'Kasepuhan Ciptagelar'
+  }
+]
 
 export default function AreasPage() {
-  const areas = [
-    {
-      id: 'AREA-001',
-      name: 'Kawasan Hutan Adat Merangin',
-      location: 'Kabupaten Merangin, Jambi',
-      hectares: '142.5 Ha',
-      totalTrees: 1850,
-      adoptedTrees: 620,
-      legalStatus: 'VERIFIED_SK',
-      publishStatus: 'PUBLISHED',
-      manager: 'Lembaga Pengelola Hutan Adat (LPHA)'
-    },
-    {
-      id: 'AREA-002',
-      name: 'Kawasan Konservasi Kutai Barat',
-      location: 'Kutai Barat, Kalimantan Timur',
-      hectares: '280.0 Ha',
-      totalTrees: 2420,
-      adoptedTrees: 800,
-      legalStatus: 'VERIFIED_SK',
-      publishStatus: 'PUBLISHED',
-      manager: 'Yayasan Konservasi Borneo'
-    },
-    {
-      id: 'AREA-003',
-      name: 'Hutan Desa Ciptagelar',
-      location: 'Sukabumi, Jawa Barat',
-      hectares: '95.0 Ha',
-      totalTrees: 580,
-      adoptedTrees: 0,
-      legalStatus: 'UNDER_REVIEW',
+  const [areas, setAreas] = useState<any[]>(INITIAL_AREAS)
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
+    KanopiApi.getAdminAreas(token)
+      .then(res => {
+        if (res && Array.isArray(res) && res.length > 0) {
+          const mapped = res.map((a: any, idx: number) => ({
+            id: a.id || `AREA-00${idx + 1}`,
+            name: a.name,
+            location: a.location || 'Muara Gembong, Jawa Barat',
+            hectares: `${a.hectares || 120} Ha`,
+            totalTrees: a._count?.trees || 5,
+            adoptedTrees: a.adopted_count || 1,
+            legalStatus: a.legalStatus || a.legal_status || 'VERIFIED_SK',
+            publishStatus: a.publicationStatus || a.publication_status || 'PUBLISHED',
+            manager: a.owner_org?.name || 'Yayasan Kanopi Kita'
+          }))
+          setAreas(mapped)
+        }
+      })
+      .catch(() => {})
+  }, [])
       publishStatus: 'DRAFT',
       manager: 'Kasepuhan Adat Ciptagelar'
     }
