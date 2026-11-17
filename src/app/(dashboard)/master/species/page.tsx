@@ -31,11 +31,11 @@ interface SpeciesItem {
   id: string
   localName: string
   scientificName: string
-  family: string
+  family?: string
   native: boolean
-  iucnStatus: string
+  iucnStatus?: string
   status: string
-  createdAt: string
+  createdAt?: string
 }
 
 const IUCN_BADGE: Record<string, { label: string; bg: string; color: string }> = {

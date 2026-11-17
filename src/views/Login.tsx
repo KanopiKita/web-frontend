@@ -28,7 +28,7 @@ import type { Mode } from '@core/types'
 // Component Imports
 import Link from '@components/Link'
 import Logo from '@components/layout/shared/Logo'
-import { KanopiApi } from '@/libs/apiClient'
+import { KanopiApi, setAuthCookie } from '@/libs/apiClient'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
@@ -95,9 +95,11 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
         localStorage.setItem('access_token', res.access_token)
         localStorage.setItem('refresh_token', res.refresh_token)
         localStorage.setItem('user', JSON.stringify(res.user))
-        document.cookie = `access_token=${res.access_token}; path=/; max-age=86400`
+        setAuthCookie(res.access_token)
       }
-      router.push('/dashboard')
+      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+      const redirectTo = params?.get('redirect') || '/dashboard'
+      router.push(redirectTo)
     } catch (err: any) {
       setError(err?.message || 'Gagal masuk. Periksa email dan kata sandi Anda.')
     } finally {

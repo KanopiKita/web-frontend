@@ -1,8 +1,15 @@
-/**
- * Kanopi Kita Backend API Client
- * Berkomunikasi langsung dengan NestJS + Fastify Modular Monolith Backend (/v1/...)
- * Menyesuaikan struktur EnvelopeInterceptor: { data, meta, error }
- */
+import type {
+  KanopiUser,
+  KanopiArea,
+  KanopiTree,
+  KanopiSpecies,
+  KanopiSubmission,
+  KanopiIncident,
+  KanopiAssignment,
+  KanopiAdoptionPackage,
+  KanopiOrganization,
+  DashboardAggregates
+} from '@/types/kanopiTypes'
 
 export function getApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
@@ -13,7 +20,7 @@ export function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1'
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T
   meta?: {
     request_id?: string
@@ -22,18 +29,37 @@ export interface ApiResponse<T = any> {
   error?: {
     code: string
     message: string
-    details?: any
+    details?: unknown
   }
 }
 
 export interface ApiRequestOptions extends RequestInit {
   token?: string
   _retry?: boolean
+  skipCache?: boolean
 }
 
+const CACHE_TTL_MS = 12_000
+const getCache = new Map<string, { timestamp: number; data: unknown }>()
+const inflightRequests = new Map<string, Promise<unknown>>()
 let refreshPromise: Promise<string | null> | null = null
 
-async function ensureValidToken(): Promise<string | null> {
+export function setAuthCookie(accessToken: string) {
+  if (typeof document === 'undefined') return
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:'
+  document.cookie = `access_token=${accessToken}; path=/; max-age=86400; SameSite=Lax${isSecure ? '; Secure' : ''}`
+}
+
+export function clearAuthSession() {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user')
+  document.cookie = 'access_token=; path=/; max-age=0; SameSite=Lax'
+  getCache.clear()
+}
+
+async function rotateAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   if (refreshPromise) return refreshPromise
 
@@ -42,7 +68,6 @@ async function ensureValidToken(): Promise<string | null> {
       const baseUrl = getApiBaseUrl().replace(/\/$/, '')
       const storedRefresh = localStorage.getItem('refresh_token')
 
-      // 1. Coba refresh token bila ada
       if (storedRefresh && storedRefresh.length >= 20) {
         const res = await fetch(`${baseUrl}/auth/refresh`, {
           method: 'POST',
@@ -55,29 +80,12 @@ async function ensureValidToken(): Promise<string | null> {
           if (data?.access_token) {
             localStorage.setItem('access_token', data.access_token)
             if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token)
-            document.cookie = `access_token=${data.access_token}; path=/; max-age=86400`
+            setAuthCookie(data.access_token)
             return data.access_token as string
           }
         }
       }
 
-      // 2. Fallback auto-session ke akun Super Admin seed BE bila belum login di sesi backoffice
-      const loginRes = await fetch(`${baseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ email: 'admin@kanopikita.id', password: 'Password123!' })
-      })
-      if (loginRes.ok) {
-        const json = await loginRes.json().catch(() => ({}))
-        const data = json.data || json
-        if (data?.access_token) {
-          localStorage.setItem('access_token', data.access_token)
-          if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token)
-          if (data.user) localStorage.setItem('user', JSON.stringify(data.user))
-          document.cookie = `access_token=${data.access_token}; path=/; max-age=86400`
-          return data.access_token as string
-        }
-      }
       return null
     } catch {
       return null
@@ -90,7 +98,33 @@ async function ensureValidToken(): Promise<string | null> {
 }
 
 export async function apiRequest<T = any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { token, _retry = false, headers = {}, ...customConfig } = options
+  const { token, _retry = false, skipCache = false, headers = {}, ...customConfig } = options
+  const method = (customConfig.method || 'GET').toUpperCase()
+
+  // Invalidasi cache GET setiap kali ada mutasi data
+  if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
+    getCache.clear()
+  }
+
+  const resolvedToken =
+    token || (typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined)
+
+  const baseUrl = getApiBaseUrl().replace(/\/$/, '')
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+  const url = `${baseUrl}${cleanEndpoint}`
+  const cacheKey = `${method}:${url}:${resolvedToken || 'anon'}`
+
+  // Deduplikasi & Short-lived Cache untuk GET request paralel
+  if (method === 'GET' && !skipCache && typeof window !== 'undefined') {
+    const cached = getCache.get(cacheKey)
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      return cached.data as T
+    }
+    const existingInflight = inflightRequests.get(cacheKey)
+    if (existingInflight) {
+      return existingInflight as Promise<T>
+    }
+  }
 
   const defaultHeaders: Record<string, string> = {
     ...(customConfig.body != null ? { 'Content-Type': 'application/json' } : {}),
@@ -98,55 +132,60 @@ export async function apiRequest<T = any>(endpoint: string, options: ApiRequestO
     ...(headers as Record<string, string>)
   }
 
-  let resolvedToken = token || (typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined)
-
-  if (!resolvedToken && typeof window !== 'undefined' && !endpoint.includes('/auth/login') && !endpoint.includes('/adopters/register')) {
-    resolvedToken = (await ensureValidToken()) || undefined
-  }
-
   if (resolvedToken) {
     defaultHeaders['Authorization'] = `Bearer ${resolvedToken}`
   }
 
   // Auto Idempotency Key untuk operasi mutasi
-  if (customConfig.method && ['POST', 'PATCH', 'PUT', 'DELETE'].includes(customConfig.method.toUpperCase())) {
+  if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
     if (!defaultHeaders['X-Idempotency-Key']) {
       defaultHeaders['X-Idempotency-Key'] = `web-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
     }
   }
 
-  const baseUrl = getApiBaseUrl().replace(/\/$/, '')
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-  const url = `${baseUrl}${cleanEndpoint}`
+  const requestPromise = (async (): Promise<T> => {
+    try {
+      const response = await fetch(url, {
+        headers: defaultHeaders,
+        ...customConfig
+      })
 
-  const response = await fetch(url, {
-    headers: defaultHeaders,
-    ...customConfig
-  })
+      // Bila token expired (401), rotasi via refresh_token 1x
+      if (response.status === 401 && !_retry && typeof window !== 'undefined' && !endpoint.includes('/auth/login')) {
+        const newToken = await rotateAccessToken()
+        if (newToken) {
+          return apiRequest<T>(endpoint, { ...options, token: newToken, _retry: true, skipCache: true })
+        }
+      }
 
-  // Bila token expired (401), refresh otomatis 1x dan ulangi request
-  if (response.status === 401 && !_retry && typeof window !== 'undefined' && !endpoint.includes('/auth/login')) {
-    const newToken = await ensureValidToken()
-    if (newToken) {
-      return apiRequest<T>(endpoint, { ...options, token: newToken, _retry: true })
+      const json = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        const errorMsg = json?.error?.message || json?.message || `Gagal memproses permintaan (${response.status})`
+        throw new Error(errorMsg)
+      }
+
+      const unpacked = (json.data !== undefined ? json.data : json) as T
+      if (method === 'GET' && typeof window !== 'undefined') {
+        getCache.set(cacheKey, { timestamp: Date.now(), data: unpacked })
+      }
+      return unpacked
+    } finally {
+      inflightRequests.delete(cacheKey)
     }
+  })()
+
+  if (method === 'GET' && !skipCache && typeof window !== 'undefined') {
+    inflightRequests.set(cacheKey, requestPromise)
   }
 
-  const json = await response.json().catch(() => ({}))
-
-  if (!response.ok) {
-    const errorMsg = json?.error?.message || json?.message || `API Error: ${response.status} ${response.statusText}`
-    throw new Error(errorMsg)
-  }
-
-  return json.data !== undefined ? json.data : json
+  return requestPromise
 }
 
-// Service Endpoints Selaras Kontrak Backend NestJS
 export const KanopiApi = {
   // 1. IAM & Authentication
   login: (credentials: { email: string; password: string }) =>
-    apiRequest<{ access_token: string; refresh_token: string; user: any }>('/auth/login', {
+    apiRequest<{ access_token: string; refresh_token: string; user: KanopiUser }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     }),
@@ -158,7 +197,7 @@ export const KanopiApi = {
     }),
 
   getCurrentUser: (token?: string) =>
-    apiRequest('/me', { token }),
+    apiRequest<KanopiUser>('/me', { token }),
 
   logout: (refreshToken?: string, token?: string) =>
     apiRequest('/auth/logout', {
@@ -168,23 +207,23 @@ export const KanopiApi = {
     }),
 
   getUsers: (token?: string) =>
-    apiRequest<any[]>('/users', { token }),
+    apiRequest<KanopiUser[]>('/users', { token }),
 
   createUser: (payload: { email: string; name: string; password: string; phone?: string }, token?: string) =>
-    apiRequest('/users', { method: 'POST', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiUser>('/users', { method: 'POST', body: JSON.stringify(payload), token }),
 
   updateUser: (userId: string, payload: { name?: string; phone?: string; password?: string }, token?: string) =>
-    apiRequest(`/users/${userId}`, { method: 'PATCH', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiUser>(`/users/${userId}`, { method: 'PATCH', body: JSON.stringify(payload), token }),
 
   verifyUser: (userId: string, status: 'VERIFIED' | 'REJECTED', token?: string) =>
-    apiRequest(`/users/${userId}/verify`, { method: 'PATCH', body: JSON.stringify({ status }), token }),
+    apiRequest<KanopiUser>(`/users/${userId}/verify`, { method: 'PATCH', body: JSON.stringify({ status }), token }),
 
   getRoles: (token?: string) =>
     apiRequest<any[]>('/roles', { token }),
 
   // 2. Organizations & Mitra
   getOrganizations: (token?: string) =>
-    apiRequest<any[]>('/organizations', { token }),
+    apiRequest<KanopiOrganization[]>('/organizations', { token }),
 
   createOrganization: (
     payload: {
@@ -194,10 +233,10 @@ export const KanopiApi = {
     },
     token?: string
   ) =>
-    apiRequest('/organizations', { method: 'POST', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiOrganization>('/organizations', { method: 'POST', body: JSON.stringify(payload), token }),
 
   verifyOrganization: (orgId: string, verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED', token?: string) =>
-    apiRequest(`/organizations/${orgId}/verify`, {
+    apiRequest<KanopiOrganization>(`/organizations/${orgId}/verify`, {
       method: 'PATCH',
       body: JSON.stringify({ verification_status: verificationStatus }),
       token
@@ -205,22 +244,28 @@ export const KanopiApi = {
 
   // 3. Kawasan Konservasi & Batas WebGIS (Area Module)
   getAdminAreas: (token?: string) =>
-    apiRequest<any[]>('/admin/areas', { token }),
+    apiRequest<KanopiArea[]>('/admin/areas', { token }),
 
   getPublicAreas: (token?: string) =>
-    apiRequest<any[]>('/areas', { token }),
+    apiRequest<KanopiArea[]>('/areas', { token }),
 
   getAreaDetail: (id: string, token?: string) =>
-    apiRequest(`/areas/${id}`, { token }),
+    apiRequest<KanopiArea>(`/areas/${id}`, { token }),
 
-  createArea: (payload: { name: string; org_id: string; description?: string; boundaries_geojson?: any; legal_doc_urls?: string[] }, token?: string) =>
-    apiRequest('/admin/areas', { method: 'POST', body: JSON.stringify(payload), token }),
+  createArea: (
+    payload: { name: string; org_id: string; description?: string; boundaries_geojson?: any; legal_doc_urls?: string[] },
+    token?: string
+  ) =>
+    apiRequest<KanopiArea>('/admin/areas', { method: 'POST', body: JSON.stringify(payload), token }),
 
   publishArea: (areaId: string, token?: string) =>
-    apiRequest(`/admin/areas/${areaId}/publish`, { method: 'POST', token }),
+    apiRequest<KanopiArea>(`/admin/areas/${areaId}/publish`, { method: 'POST', token }),
 
   // 4. Inventaris & Review Pohon (Registry & Review Module)
-  getAdminTrees: (params?: { area_id?: string; lifecycle_status?: string; adoption_status?: string; page?: number; limit?: number }, token?: string) => {
+  getAdminTrees: (
+    params?: { area_id?: string; lifecycle_status?: string; adoption_status?: string; page?: number; limit?: number },
+    token?: string
+  ) => {
     const query = new URLSearchParams()
     if (params?.area_id) query.append('area_id', params.area_id)
     if (params?.lifecycle_status) query.append('lifecycle_status', params.lifecycle_status)
@@ -228,7 +273,7 @@ export const KanopiApi = {
     if (params?.page) query.append('page', String(params.page))
     if (params?.limit) query.append('limit', String(params.limit))
     const qs = query.toString()
-    return apiRequest<any[]>(`/admin/trees${qs ? `?${qs}` : ''}`, { token })
+    return apiRequest<KanopiTree[]>(`/admin/trees${qs ? `?${qs}` : ''}`, { token })
   },
 
   getPublicTrees: (params?: { area_id?: string; page?: number; limit?: number }, token?: string) => {
@@ -237,11 +282,11 @@ export const KanopiApi = {
     if (params?.page) query.append('page', String(params.page))
     if (params?.limit) query.append('limit', String(params.limit))
     const qs = query.toString()
-    return apiRequest<any[]>(`/trees${qs ? `?${qs}` : ''}`, { token })
+    return apiRequest<KanopiTree[]>(`/trees${qs ? `?${qs}` : ''}`, { token })
   },
 
   getReviewQueue: (token?: string) =>
-    apiRequest<any[]>('/admin/review-queue', { token }),
+    apiRequest<KanopiSubmission[]>('/admin/review-queue', { token }),
 
   reviewSubmission: (
     submissionId: string,
@@ -251,14 +296,22 @@ export const KanopiApi = {
     apiRequest(`/admin/submissions/${submissionId}/review`, { method: 'POST', body: JSON.stringify(payload), token }),
 
   publishTree: (treeId: string, token?: string) =>
-    apiRequest(`/admin/trees/${treeId}/publish`, { method: 'POST', token }),
+    apiRequest<KanopiTree>(`/admin/trees/${treeId}/publish`, { method: 'POST', token }),
 
-  updateTreeAvailability: (treeId: string, status: 'ELIGIBLE' | 'AVAILABLE' | 'RESERVED' | 'ADOPTED' | 'UNAVAILABLE', token?: string) =>
-    apiRequest(`/admin/trees/${treeId}/availability`, { method: 'PATCH', body: JSON.stringify({ status }), token }),
+  updateTreeAvailability: (
+    treeId: string,
+    status: 'ELIGIBLE' | 'AVAILABLE' | 'RESERVED' | 'ADOPTED' | 'UNAVAILABLE',
+    token?: string
+  ) =>
+    apiRequest<KanopiTree>(`/admin/trees/${treeId}/availability`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+      token
+    }),
 
   // 5. Adopsi & Transaksi (Commerce Module)
   getAdoptionPackages: (token?: string) =>
-    apiRequest<any[]>('/adoption-packages', { token }),
+    apiRequest<KanopiAdoptionPackage[]>('/adoption-packages', { token }),
 
   getMyAdoptions: (token?: string) =>
     apiRequest<any[]>('/me/adoptions', { token }),
@@ -278,7 +331,7 @@ export const KanopiApi = {
   // 6. Penugasan Lapangan & Jadwal (Assignment Module)
   getAdminAssignments: (status?: string, token?: string) => {
     const qs = status ? `?status=${encodeURIComponent(status)}` : ''
-    return apiRequest<any[]>(`/admin/assignments${qs}`, { token })
+    return apiRequest<KanopiAssignment[]>(`/admin/assignments${qs}`, { token })
   },
 
   createAssignment: (
@@ -292,10 +345,10 @@ export const KanopiApi = {
     },
     token?: string
   ) =>
-    apiRequest('/admin/assignments', { method: 'POST', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiAssignment>('/admin/assignments', { method: 'POST', body: JSON.stringify(payload), token }),
 
   cancelAssignment: (assignmentId: string, reason = 'Dibatalkan oleh Admin', token?: string) =>
-    apiRequest(`/admin/assignments/${assignmentId}/cancel`, {
+    apiRequest<KanopiAssignment>(`/admin/assignments/${assignmentId}/cancel`, {
       method: 'POST',
       body: JSON.stringify({ reason }),
       token
@@ -303,23 +356,23 @@ export const KanopiApi = {
 
   // 7. Insiden & Triage Pohon (Incident Module)
   getAdminIncidents: (token?: string) =>
-    apiRequest<any[]>('/admin/incidents', { token }),
+    apiRequest<KanopiIncident[]>('/admin/incidents', { token }),
 
   reportIncident: (
     payload: { tree_id: string; severity: 'low' | 'medium' | 'high' | 'critical'; description: string },
     token?: string
   ) =>
-    apiRequest('/incidents', { method: 'POST', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiIncident>('/incidents', { method: 'POST', body: JSON.stringify(payload), token }),
 
   // 8. Master Data (Species & Form Template)
   getMasterSpecies: (token?: string) =>
-    apiRequest<any[]>('/species', { token }),
+    apiRequest<KanopiSpecies[]>('/species', { token }),
 
   createSpecies: (
     payload: { local_name: string; scientific_name: string; family?: string; native?: boolean; iucn_status?: string },
     token?: string
   ) =>
-    apiRequest('/admin/species', { method: 'POST', body: JSON.stringify(payload), token }),
+    apiRequest<KanopiSpecies>('/admin/species', { method: 'POST', body: JSON.stringify(payload), token }),
 
   getAdminFormTemplates: (token?: string) =>
     apiRequest<any[]>('/admin/form-templates', { token }),
@@ -336,15 +389,15 @@ export const KanopiApi = {
     apiRequest('/admin/form-templates', { method: 'POST', body: JSON.stringify(payload), token }),
 
   // 9. Aggregated Dashboard Overview
-  getDashboardAggregates: async (token?: string) => {
+  getDashboardAggregates: async (token?: string): Promise<DashboardAggregates | null> => {
     try {
       const [areasRes, treesRes, reviewQueueRes, incidentsRes] = await Promise.all([
-        apiRequest<any[]>('/admin/areas', { token })
-          .catch(() => apiRequest<any[]>('/areas', { token }).catch(() => [])),
-        apiRequest<any[]>('/admin/trees', { token })
-          .catch(() => apiRequest<any[]>('/trees', { token }).catch(() => [])),
-        apiRequest<any[]>('/admin/review-queue', { token }).catch(() => []),
-        apiRequest<any[]>('/admin/incidents', { token }).catch(() => [])
+        apiRequest<KanopiArea[]>('/admin/areas', { token })
+          .catch(() => apiRequest<KanopiArea[]>('/areas', { token }).catch(() => [])),
+        apiRequest<KanopiTree[]>('/admin/trees', { token })
+          .catch(() => apiRequest<KanopiTree[]>('/trees', { token }).catch(() => [])),
+        apiRequest<KanopiSubmission[]>('/admin/review-queue', { token }).catch(() => []),
+        apiRequest<KanopiIncident[]>('/admin/incidents', { token }).catch(() => [])
       ])
 
       const areas = Array.isArray(areasRes) ? areasRes : []

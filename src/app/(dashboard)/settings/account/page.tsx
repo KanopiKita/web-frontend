@@ -14,7 +14,7 @@ import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
-import { KanopiApi } from '@/libs/apiClient'
+import { KanopiApi, setAuthCookie } from '@/libs/apiClient'
 
 const DEMO_ACCOUNTS = [
   { role: 'SUPERADMIN', label: 'Super Admin Platform', email: 'admin@kanopikita.id', color: '#D94B4B' },
@@ -83,7 +83,7 @@ export default function AccountSettingsPage() {
         localStorage.setItem('access_token', res.access_token)
         localStorage.setItem('refresh_token', res.refresh_token)
         localStorage.setItem('user', JSON.stringify(res.user))
-        document.cookie = `access_token=${res.access_token}; path=/; max-age=86400`
+        setAuthCookie(res.access_token)
       }
       setFeedback({
         type: 'success',

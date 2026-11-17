@@ -102,57 +102,6 @@ export default function DashboardPage() {
     }
   ]
 
-  const prioritySurveys = [
-    {
-      id: 'TREE-2026-0891',
-      speciesLatin: 'Shorea leprosula',
-      speciesLocal: 'Meranti Merah',
-      area: 'Kawasan Hutan Adat Merangin',
-      surveyor: 'Budi Hartono (ID: SRV-04)',
-      date: '16 Nov 2026, 14:20',
-      status: 'PENDING_REVIEW',
-      health: 'Sehat',
-      dbh: '48.5 cm',
-      height: '24 m'
-    },
-    {
-      id: 'TREE-2026-0892',
-      speciesLatin: 'Dipterocarpus gracilis',
-      speciesLocal: 'Keruing',
-      area: 'Taman Nasional Bukit Tigapuluh',
-      surveyor: 'Siti Rahma (ID: SRV-12)',
-      date: '16 Nov 2026, 11:45',
-      status: 'PENDING_REVIEW',
-      health: 'Sehat',
-      dbh: '62.0 cm',
-      height: '31 m'
-    },
-    {
-      id: 'TREE-2026-0887',
-      speciesLatin: 'Eusideroxylon zwageri',
-      speciesLocal: 'Kayu Ulin',
-      area: 'Kawasan Konservasi Kutai Barat',
-      surveyor: 'Ahmad Fauzi (ID: SRV-08)',
-      date: '15 Nov 2026, 16:30',
-      status: 'NEEDS_INSPECTION',
-      health: 'Sakit (Tajuk Kering)',
-      dbh: '84.2 cm',
-      height: '28 m'
-    },
-    {
-      id: 'TREE-2026-0885',
-      speciesLatin: 'Aquilaria malaccensis',
-      speciesLocal: 'Gaharu',
-      area: 'Kawasan Konservasi Kutai Barat',
-      surveyor: 'Ahmad Fauzi (ID: SRV-08)',
-      date: '15 Nov 2026, 10:15',
-      status: 'ELIGIBLE_ADOPTION',
-      health: 'Sehat',
-      dbh: '35.0 cm',
-      height: '18 m'
-    }
-  ]
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
       {/* Top Banner / Welcome Section */}
@@ -304,7 +253,7 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(backendTrees.length > 0 ? backendTrees : prioritySurveys).map(row => (
+                  {backendTrees.map(row => (
                     <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>

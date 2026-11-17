@@ -20,7 +20,7 @@ import { Menu, MenuItem, MenuSection } from '@menu/vertical-menu'
 
 // Hook & API Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
-import { KanopiApi } from '@/libs/apiClient'
+import { KanopiApi, clearAuthSession } from '@/libs/apiClient'
 
 // Styled Component Imports
 import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNavExpandIcon'
@@ -74,12 +74,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
       const rt = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') || undefined : undefined
       await KanopiApi.logout(rt).catch(() => {})
     } finally {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
-        localStorage.removeItem('user')
-        document.cookie = 'access_token=; path=/; max-age=0'
-      }
+      clearAuthSession()
       router.push('/login')
     }
   }

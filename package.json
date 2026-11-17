@@ -34,7 +34,6 @@
     "react-map-gl": "^8.1.0",
     "react-perfect-scrollbar": "1.5.8",
     "react-use": "17.6.0",
-    "running": "^0.0.1",
     "server-only": "0.0.1"
   },
   "devDependencies": {

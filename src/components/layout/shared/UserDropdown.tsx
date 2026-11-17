@@ -24,7 +24,7 @@ import Chip from '@mui/material/Chip'
 
 // Hook & API Imports
 import { useSettings } from '@core/hooks/useSettings'
-import { KanopiApi } from '@/libs/apiClient'
+import { KanopiApi, clearAuthSession } from '@/libs/apiClient'
 
 const BadgeContentSpan = styled('span')({
   width: 8,
@@ -113,12 +113,7 @@ const UserDropdown = () => {
       const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') || undefined : undefined
       await KanopiApi.logout(refreshToken).catch(() => {})
     } finally {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
-        localStorage.removeItem('user')
-        document.cookie = 'access_token=; path=/; max-age=0'
-      }
+      clearAuthSession()
       setOpen(false)
       router.push('/login')
     }

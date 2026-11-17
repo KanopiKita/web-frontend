@@ -16,7 +16,7 @@ case "$1" in
       exit 0
     fi
     echo "Starting Kanopi Kita Frontend service on port $PORT..."
-    nohup npx next dev -p $PORT -H 0.0.0.0 > "$LOG_FILE" 2>&1 &
+    nohup npx next start -p $PORT -H 0.0.0.0 > "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     sleep 3
     if kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
