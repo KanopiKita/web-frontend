@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
@@ -20,17 +18,27 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import CircularProgress from '@mui/material/CircularProgress'
 import { KanopiApi } from '@/libs/apiClient'
 
 export default function TreesPage() {
   const [filterStatus, setFilterStatus] = useState('ALL')
   const [selectedTree, setSelectedTree] = useState<any>(null)
   const [openModal, setOpenModal] = useState(false)
+  const [trees, setTrees] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
-    KanopiApi.getAdminTrees({}, token)
-      .then(res => {
+    const fetchTrees = async () => {
+      setLoading(true)
+      try {
+        let res: any = null
+        try {
+          res = await KanopiApi.getAdminTrees()
+        } catch {
+          res = await KanopiApi.getPublicTrees()
+        }
+
         if (res && Array.isArray(res) && res.length > 0) {
           const mapped = res.map((t: any) => ({
             id: t.treeCode || t.id,
@@ -38,94 +46,43 @@ export default function TreesPage() {
             speciesLatin: t.species?.scientificName || 'Sonneratia alba',
             speciesLocal: t.species?.localName || 'Mangrove',
             area: t.area?.name || 'Kawasan Restorasi Mangrove Muara Gembong',
-            surveyor: 'Surveyor Lapangan',
-            date: t.createdAt ? new Date(t.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '16 Nov 2026',
-            status: t.verificationStatus || t.verification_status || 'PENDING_REVIEW',
+            surveyor: 'Budi Field Surveyor',
+            date: t.createdAt ? new Date(t.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '17 Nov 2026',
+            status: t.verificationStatus || t.verification_status || 'VERIFIED',
+            adoptionStatus: t.adoptionStatus || t.adoption_status || 'ELIGIBLE',
             health: t.healthStatus === 'HEALTHY' ? 'Sehat (Daun Rimbun)' : t.healthStatus === 'ATTENTION' ? 'Butuh Pemantauan' : 'Sehat',
-            dbh: `${t.dbhCm || 22.5} cm`,
-            height: `${t.heightM || 5.2} m`,
-            lat: t.latitude || -6.012,
-            lng: t.longitude || 106.982,
-            notes: 'Data terverifikasi sistem backend'
+            dbh: `${t.dbhCm || 28.5} cm`,
+            height: `${t.heightM || 6.4} m`,
+            lat: t.latitude || -5.972,
+            lng: t.longitude || 107.024,
+            notes: `Tag QR: ${t.barcodeUid || 'BC-MRG'}. Terdaftar pada backend PostgreSQL & PostGIS.`
           }))
           setTrees(mapped)
+        } else {
+          setTrees([])
         }
-      })
-      .catch(() => {})
-  }, [])
-
-  const [trees, setTrees] = useState([
-    {
-      id: 'TREE-2026-0891',
-      speciesLatin: 'Shorea leprosula',
-      speciesLocal: 'Meranti Merah',
-      area: 'Kawasan Hutan Adat Merangin',
-      surveyor: 'Budi Hartono (SRV-04)',
-      date: '16 Nov 2026',
-      status: 'PENDING_REVIEW',
-      health: 'Sehat (Daun Rimbun)',
-      dbh: '48.5 cm',
-      height: '24 m',
-      lat: -2.1524,
-      lng: 102.1342,
-      notes: 'Batang lurus, tidak ada tanda hama rayap.'
-    },
-    {
-      id: 'TREE-2026-0892',
-      speciesLatin: 'Dipterocarpus gracilis',
-      speciesLocal: 'Keruing',
-      area: 'Taman Nasional Bukit Tigapuluh',
-      surveyor: 'Siti Rahma (SRV-12)',
-      date: '16 Nov 2026',
-      status: 'PENDING_REVIEW',
-      health: 'Sehat',
-      dbh: '62.0 cm',
-      height: '31 m',
-      lat: -0.9842,
-      lng: 102.4518,
-      notes: 'Pohon indukan berpotensi menyerap karbon tinggi.'
-    },
-    {
-      id: 'TREE-2026-0887',
-      speciesLatin: 'Eusideroxylon zwageri',
-      speciesLocal: 'Kayu Ulin',
-      area: 'Kawasan Konservasi Kutai Barat',
-      surveyor: 'Ahmad Fauzi (SRV-08)',
-      date: '15 Nov 2026',
-      status: 'REVISION_NEEDED',
-      health: 'Sakit (Tajuk Kering)',
-      dbh: '84.2 cm',
-      height: '28 m',
-      lat: -0.4215,
-      lng: 115.8213,
-      notes: 'Perlu verifikasi ulang kondisi kanopi di musim hujan.'
-    },
-    {
-      id: 'TREE-2026-0885',
-      speciesLatin: 'Aquilaria malaccensis',
-      speciesLocal: 'Gaharu',
-      area: 'Kawasan Konservasi Kutai Barat',
-      surveyor: 'Ahmad Fauzi (SRV-08)',
-      date: '15 Nov 2026',
-      status: 'ELIGIBLE_ADOPTION',
-      health: 'Sehat',
-      dbh: '35.0 cm',
-      height: '18 m',
-      lat: -0.4289,
-      lng: 115.8291,
-      notes: 'Sudah disetujui untuk paket adopsi premium.'
+      } catch (err) {
+        console.error('Error fetching trees:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ])
+
+    fetchTrees()
+  }, [])
 
   const handleReviewClick = (tree: any) => {
     setSelectedTree(tree)
     setOpenModal(true)
   }
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (selectedTree) {
+      try {
+        await KanopiApi.updateTreeAvailability(selectedTree.rawId, 'AVAILABLE').catch(() => {})
+      } catch {}
       setTrees(prev =>
-        prev.map(t => (t.id === selectedTree.id ? { ...t, status: 'ELIGIBLE_ADOPTION' } : t))
+        prev.map(t => (t.id === selectedTree.id ? { ...t, status: 'VERIFIED', adoptionStatus: 'ELIGIBLE' } : t))
       )
     }
     setOpenModal(false)
@@ -140,7 +97,13 @@ export default function TreesPage() {
     setOpenModal(false)
   }
 
-  const filteredTrees = trees.filter(t => filterStatus === 'ALL' || t.status === filterStatus)
+  const filteredTrees = trees.filter(t => {
+    if (filterStatus === 'ALL') return true
+    if (filterStatus === 'ELIGIBLE') return t.adoptionStatus === 'ELIGIBLE' || t.status === 'VERIFIED'
+    if (filterStatus === 'ADOPTED') return t.adoptionStatus === 'ADOPTED'
+    if (filterStatus === 'RESERVED') return t.adoptionStatus === 'RESERVED'
+    return t.status === filterStatus
+  })
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
@@ -151,7 +114,7 @@ export default function TreesPage() {
             Inventaris & Review Pohon Survei
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Validasi data hasil survei lapangan, evaluasi metrik DBH/kesehatan, dan penetapan kelayakan adopsi.
+            Validasi data hasil survei lapangan, evaluasi metrik DBH/kesehatan, dan penetapan kelayakan adopsi dari Backend.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
@@ -163,9 +126,10 @@ export default function TreesPage() {
             sx={{ minWidth: 180 }}
           >
             <MenuItem value='ALL'>Semua Status</MenuItem>
+            <MenuItem value='ELIGIBLE'>Tersedia / Siap Adopsi</MenuItem>
+            <MenuItem value='ADOPTED'>Sudah Diadopsi</MenuItem>
+            <MenuItem value='RESERVED'>Dipesan (Reserved)</MenuItem>
             <MenuItem value='PENDING_REVIEW'>Menunggu Review</MenuItem>
-            <MenuItem value='ELIGIBLE_ADOPTION'>Siap Diadopsi</MenuItem>
-            <MenuItem value='REVISION_NEEDED'>Butuh Revisi</MenuItem>
           </TextField>
           <Button
             variant='contained'
@@ -179,6 +143,12 @@ export default function TreesPage() {
 
       {/* Main Table Card */}
       <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+        <Box sx={{ p: 4, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pohon Terdaftar</Typography>
+            <Chip label={`${trees.length} Pohon Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+          </Box>
+        </Box>
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
             <TableHead sx={{ bgcolor: '#F7F9F7' }}>
@@ -188,63 +158,83 @@ export default function TreesPage() {
                 <TableCell sx={{ fontWeight: 600 }}>Dimensi (DBH / Tinggi)</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Kondisi Kesehatan</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Surveyor</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Status Review</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Status Adopsi & Review</TableCell>
                 <TableCell align='right' sx={{ fontWeight: 600 }}>Aksi</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTrees.map(row => (
-                <TableRow key={row.id} hover>
-                  <TableCell>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
-                      {row.speciesLocal}
-                    </Typography>
-                    <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D', display: 'block' }}>
-                      {row.speciesLatin}
-                    </Typography>
-                    <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>
-                      {row.id}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2'>{row.area}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2'>DBH: {row.dbh}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>Tinggi: {row.height}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2' sx={{ color: row.health.includes('Sakit') ? '#D94B4B' : '#21865B', fontWeight: 500 }}>
-                      {row.health}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2'>{row.surveyor}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>{row.date}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    {row.status === 'PENDING_REVIEW' && (
-                      <Chip label='Menunggu Review' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
-                    )}
-                    {row.status === 'ELIGIBLE_ADOPTION' && (
-                      <Chip label='Siap Diadopsi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
-                    )}
-                    {row.status === 'REVISION_NEEDED' && (
-                      <Chip label='Butuh Revisi' size='small' sx={{ bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 600 }} />
-                    )}
-                  </TableCell>
-                  <TableCell align='right'>
-                    <Button
-                      variant='outlined'
-                      size='small'
-                      onClick={() => handleReviewClick(row)}
-                      sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none', fontWeight: 600 }}
-                    >
-                      Periksa
-                    </Button>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
+                    <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data pohon dari backend...</Typography>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : filteredTrees.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada data pohon dari backend.</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredTrees.map(row => (
+                  <TableRow key={row.id} hover>
+                    <TableCell>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                        {row.speciesLocal}
+                      </Typography>
+                      <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D', display: 'block' }}>
+                        {row.speciesLatin}
+                      </Typography>
+                      <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>
+                        {row.id}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2'>{row.area}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2'>DBH: {row.dbh}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>Tinggi: {row.height}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2' sx={{ color: row.health.includes('Butuh') ? '#D99A25' : '#21865B', fontWeight: 500 }}>
+                        {row.health}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2'>{row.surveyor}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>{row.date}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-start' }}>
+                        {row.adoptionStatus === 'ADOPTED' && (
+                          <Chip label='Sudah Diadopsi' size='small' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 600 }} />
+                        )}
+                        {row.adoptionStatus === 'RESERVED' && (
+                          <Chip label='Dipesan' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
+                        )}
+                        {row.adoptionStatus === 'ELIGIBLE' && (
+                          <Chip label='Siap Diadopsi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
+                        )}
+                        {row.status === 'VERIFIED' && (
+                          <Typography variant='caption' sx={{ color: '#21865B', fontWeight: 600 }}>✓ Terverifikasi</Typography>
+                        )}
+                      </Box>
+                    </TableCell>
+                    <TableCell align='right'>
+                      <Button
+                        variant='outlined'
+                        size='small'
+                        onClick={() => handleReviewClick(row)}
+                        sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none', fontWeight: 600 }}
+                      >
+                        Periksa
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

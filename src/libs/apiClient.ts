@@ -4,7 +4,15 @@
  * Menyesuaikan struktur EnvelopeInterceptor: { data, meta, error }
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1'
+export function getApiBaseUrl(): string {
+  // Bila di browser dan bukan di localhost langsung, lewatkan melalui reverse proxy path /v1
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return '/v1'
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1'
+}
 
 export interface ApiResponse<T = any> {
   data: T
@@ -32,8 +40,10 @@ export async function apiRequest<T = any>(endpoint: string, options: ApiRequestO
     ...(headers as Record<string, string>)
   }
 
-  if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`
+  // Ambil token dari param atau dari localStorage otomatis
+  const resolvedToken = token || (typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined)
+  if (resolvedToken) {
+    defaultHeaders['Authorization'] = `Bearer ${resolvedToken}`
   }
 
   // Auto Idempotency Key untuk operasi mutasi
@@ -43,7 +53,9 @@ export async function apiRequest<T = any>(endpoint: string, options: ApiRequestO
     }
   }
 
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
+  const baseUrl = getApiBaseUrl().replace(/\/$/, '')
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+  const url = `${baseUrl}${cleanEndpoint}`
 
   const response = await fetch(url, {
     headers: defaultHeaders,
@@ -76,6 +88,9 @@ export const KanopiApi = {
   logout: (token?: string) =>
     apiRequest('/auth/logout', { method: 'POST', token }),
 
+  getUsers: (token?: string) =>
+    apiRequest<any[]>('/users', { token }),
+
   // 2. Kawasan Konservasi & Batas WebGIS (Area Module)
   getAdminAreas: (token?: string) =>
     apiRequest<any[]>('/admin/areas', { token }),
@@ -104,6 +119,15 @@ export const KanopiApi = {
     return apiRequest<any[]>(`/admin/trees${qs ? `?${qs}` : ''}`, { token })
   },
 
+  getPublicTrees: (params?: { area_id?: string; page?: number; limit?: number }, token?: string) => {
+    const query = new URLSearchParams()
+    if (params?.area_id) query.append('area_id', params.area_id)
+    if (params?.page) query.append('page', String(params.page))
+    if (params?.limit) query.append('limit', String(params.limit))
+    const qs = query.toString()
+    return apiRequest<any[]>(`/trees${qs ? `?${qs}` : ''}`, { token })
+  },
+
   getReviewQueue: (token?: string) =>
     apiRequest<any[]>('/admin/review-queue', { token }),
 
@@ -119,6 +143,9 @@ export const KanopiApi = {
   // 4. Adopsi & Transaksi (Commerce Module)
   getAdoptionPackages: (token?: string) =>
     apiRequest<any[]>('/adoption-packages', { token }),
+
+  getMyAdoptions: (token?: string) =>
+    apiRequest<any[]>('/me/adoptions', { token }),
 
   verifyCertificateToken: (tokenString: string) =>
     apiRequest(`/certificates/verify/${tokenString}`),
@@ -149,19 +176,26 @@ export const KanopiApi = {
   createSpecies: (payload: { local_name: string; scientific_name: string; wood_density?: number; carbon_rate?: number }, token?: string) =>
     apiRequest('/admin/species', { method: 'POST', body: JSON.stringify(payload), token }),
 
-  // 8. Aggregated Dashboard Overview (Simulated or Aggregated from Micro-APIs)
+  // 8. Aggregated Dashboard Overview
   getDashboardAggregates: async (token?: string) => {
     try {
-      const [areas, trees, reviewQueue, incidents] = await Promise.all([
-        apiRequest<any[]>('/admin/areas', { token }).catch(() => []),
-        apiRequest<any[]>('/admin/trees', { token }).catch(() => []),
+      const [areasRes, treesRes, reviewQueueRes, incidentsRes] = await Promise.all([
+        apiRequest<any[]>('/admin/areas', { token })
+          .catch(() => apiRequest<any[]>('/areas', { token }).catch(() => [])),
+        apiRequest<any[]>('/admin/trees', { token })
+          .catch(() => apiRequest<any[]>('/trees', { token }).catch(() => [])),
         apiRequest<any[]>('/admin/review-queue', { token }).catch(() => []),
         apiRequest<any[]>('/admin/incidents', { token }).catch(() => [])
       ])
 
+      const areas = Array.isArray(areasRes) ? areasRes : []
+      const trees = Array.isArray(treesRes) ? treesRes : []
+      const reviewQueue = Array.isArray(reviewQueueRes) ? reviewQueueRes : []
+      const incidents = Array.isArray(incidentsRes) ? incidentsRes : []
+
       const totalAreas = areas.length
       const totalTrees = trees.length
-      const adoptedTrees = trees.filter((t: any) => t.adoption_status === 'ADOPTED').length
+      const adoptedTrees = trees.filter((t: any) => t.adoptionStatus === 'ADOPTED' || t.adoption_status === 'ADOPTED').length
       const pendingReviews = reviewQueue.length
       const activeIncidents = incidents.length
 

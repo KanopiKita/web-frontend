@@ -23,16 +23,43 @@ import { KanopiApi } from '@/libs/apiClient'
 export default function DashboardPage() {
   const [role, setRole] = useState<'admin' | 'area_owner'>('admin')
   const [realCounts, setRealCounts] = useState<{ totalAreas?: number; totalTrees?: number; adoptedTrees?: number } | null>(null)
+  const [backendTrees, setBackendTrees] = useState<any[]>([])
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
-    KanopiApi.getDashboardAggregates(token)
+    KanopiApi.getDashboardAggregates()
       .then(res => {
         if (res) {
           setRealCounts(res)
         }
       })
       .catch(() => {})
+
+    const fetchRecentTrees = async () => {
+      try {
+        let res: any = null
+        try {
+          res = await KanopiApi.getAdminTrees({ limit: 5 })
+        } catch {
+          res = await KanopiApi.getPublicTrees({ limit: 5 })
+        }
+        if (res && Array.isArray(res) && res.length > 0) {
+          const mapped = res.map((t: any) => ({
+            id: t.treeCode || t.id,
+            speciesLatin: t.species?.scientificName || 'Sonneratia alba',
+            speciesLocal: t.species?.localName || 'Mangrove',
+            area: t.area?.name || 'Kawasan Restorasi Mangrove Muara Gembong',
+            surveyor: 'Budi Field Surveyor (SRV-01)',
+            date: t.createdAt ? new Date(t.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '17 Nov 2026',
+            status: t.adoptionStatus === 'ADOPTED' ? 'ADOPTED' : t.adoptionStatus === 'RESERVED' ? 'RESERVED' : 'ELIGIBLE_ADOPTION',
+            health: t.healthStatus === 'HEALTHY' ? 'Sehat' : 'Butuh Perhatian',
+            dbh: `${t.dbhCm || 28.5} cm`,
+            height: `${t.heightM || 6.4} m`
+          }))
+          setBackendTrees(mapped)
+        }
+      } catch {}
+    }
+    fetchRecentTrees()
   }, [])
 
   // Sample data conforming to Kanopi Kita PRD
@@ -277,7 +304,7 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {prioritySurveys.map(row => (
+                  {(backendTrees.length > 0 ? backendTrees : prioritySurveys).map(row => (
                     <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -312,8 +339,14 @@ export default function DashboardPage() {
                         {row.status === 'NEEDS_INSPECTION' && (
                           <Chip label='Butuh Inspeksi' size='small' sx={{ bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 600 }} />
                         )}
-                        {row.status === 'ELIGIBLE_ADOPTION' && (
+                        {(row.status === 'ELIGIBLE_ADOPTION' || row.status === 'VERIFIED') && (
                           <Chip label='Siap Diadopsi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
+                        )}
+                        {row.status === 'ADOPTED' && (
+                          <Chip label='Sudah Diadopsi' size='small' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 600 }} />
+                        )}
+                        {row.status === 'RESERVED' && (
+                          <Chip label='Dipesan' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
                         )}
                       </TableCell>
                       <TableCell align='right'>

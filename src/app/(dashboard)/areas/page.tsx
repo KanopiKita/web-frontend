@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -14,73 +13,61 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
+import CircularProgress from '@mui/material/CircularProgress'
 import { KanopiApi } from '@/libs/apiClient'
 
-const INITIAL_AREAS = [
-  {
-    id: 'AREA-001',
-    name: 'Kawasan Hutan Adat Merangin',
-    location: 'Kabupaten Merangin, Jambi',
-    hectares: '142.5 Ha',
-    totalTrees: 1850,
-    adoptedTrees: 620,
-    legalStatus: 'VERIFIED_SK',
-    publishStatus: 'PUBLISHED',
-    manager: 'Lembaga Pengelola Hutan Adat (LPHA)'
-  },
-  {
-    id: 'AREA-002',
-    name: 'Kawasan Konservasi Kutai Barat',
-    location: 'Kutai Barat, Kalimantan Timur',
-    hectares: '280.0 Ha',
-    totalTrees: 2420,
-    adoptedTrees: 800,
-    legalStatus: 'VERIFIED_SK',
-    publishStatus: 'PUBLISHED',
-    manager: 'Yayasan Konservasi Borneo'
-  },
-  {
-    id: 'AREA-003',
-    name: 'Hutan Desa Ciptagelar',
-    location: 'Sukabumi, Jawa Barat',
-    hectares: '95.0 Ha',
-    totalTrees: 580,
-    adoptedTrees: 0,
-    legalStatus: 'UNDER_REVIEW',
-    publishStatus: 'DRAFT',
-    manager: 'Kasepuhan Ciptagelar'
-  }
-]
+interface AreaItem {
+  id: string
+  name: string
+  location: string
+  hectares: string
+  totalTrees: number
+  adoptedTrees: number
+  legalStatus: string
+  publishStatus: string
+  manager: string
+}
 
 export default function AreasPage() {
-  const [areas, setAreas] = useState<any[]>(INITIAL_AREAS)
+  const [areas, setAreas] = useState<AreaItem[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || undefined : undefined
-    KanopiApi.getAdminAreas(token)
-      .then(res => {
+    const fetchAreas = async () => {
+      setLoading(true)
+      try {
+        let res: any = null
+        try {
+          res = await KanopiApi.getAdminAreas()
+        } catch {
+          res = await KanopiApi.getPublicAreas()
+        }
+
         if (res && Array.isArray(res) && res.length > 0) {
-          const mapped = res.map((a: any, idx: number) => ({
+          const mapped: AreaItem[] = res.map((a: any, idx: number) => ({
             id: a.id || `AREA-00${idx + 1}`,
             name: a.name,
-            location: a.location || 'Muara Gembong, Jawa Barat',
-            hectares: `${a.hectares || 120} Ha`,
+            location: a.location || 'Muara Gembong, Bekasi, Jawa Barat',
+            hectares: `${a.hectares || 15} Ha`,
             totalTrees: a._count?.trees || 5,
             adoptedTrees: a.adopted_count || 1,
-            legalStatus: a.legalStatus || a.legal_status || 'VERIFIED_SK',
+            legalStatus: a.legalStatus === 'verified_sk_menteri' || a.legalStatus === 'VERIFIED_SK' ? 'VERIFIED_SK' : 'UNDER_REVIEW',
             publishStatus: a.publicationStatus || a.publication_status || 'PUBLISHED',
-            manager: a.owner_org?.name || 'Yayasan Kanopi Kita'
+            manager: a.ownerOrg?.name || a.owner_org?.name || 'Yayasan Kanopi Kita Indonesia'
           }))
           setAreas(mapped)
+        } else {
+          setAreas([])
         }
-      })
-      .catch(() => {})
-  }, [])
-      publishStatus: 'DRAFT',
-      manager: 'Kasepuhan Adat Ciptagelar'
+      } catch (err) {
+        console.error('Error fetching areas:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchAreas()
+  }, [])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
@@ -91,7 +78,7 @@ export default function AreasPage() {
             Kawasan Konservasi & Batas WebGIS
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Manajemen batas wilayah spasial (Polygon GeoJSON), status hak kelola legal, dan publikasi ke peta publik.
+            Manajemen batas wilayah spasial (Polygon GeoJSON), status hak kelola legal, dan publikasi ke peta publik terintegrasi Backend.
           </Typography>
         </Box>
         <Button
@@ -103,11 +90,11 @@ export default function AreasPage() {
         </Button>
       </Box>
 
-      {/* WebGIS Viewer Card Mockup */}
+      {/* WebGIS Viewer Card */}
       <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
         <Box
           sx={{
-            height: 320,
+            height: 260,
             bgcolor: '#EAF0EC',
             display: 'flex',
             alignItems: 'center',
@@ -118,12 +105,12 @@ export default function AreasPage() {
           }}
         >
           <Box sx={{ textAlign: 'center', p: 4, bgcolor: 'rgba(255,255,255,0.92)', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', maxWidth: '90%' }}>
-            <i className='ri-earth-line' style={{ fontSize: '3rem', color: '#176B4D' }} />
+            <i className='ri-earth-line' style={{ fontSize: '2.5rem', color: '#176B4D' }} />
             <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E', mt: 1 }}>
               Leaflet / Mapbox WebGIS Interactive Layer
             </Typography>
-            <Typography variant='body2' sx={{ color: '#66756D', maxWidth: 460, mt: 0.5 }}>
-              Menampilkan layer polygon 3 kawasan aktif dengan 4,850 titik sebaran koordinat GPS pohon tersurvei.
+            <Typography variant='body2' sx={{ color: '#66756D', maxWidth: 500, mt: 0.5 }}>
+              Polygon kawasan konservasi aktif terintegrasi dengan koordinat spasial PostGIS backend Kanopi Kita.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2, mt: 2 }}>
               <Chip label='Layer Batas Kawasan' size='small' sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 600 }} />
@@ -136,7 +123,14 @@ export default function AreasPage() {
 
       {/* Areas Table */}
       <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
-        <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Kawasan Konservasi Terdaftar</Typography>} />
+        <CardHeader
+          title={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Kawasan Konservasi Terdaftar</Typography>
+              <Chip label={`${areas.length} Kawasan Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+            </Box>
+          }
+        />
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
             <TableHead sx={{ bgcolor: '#F7F9F7' }}>
@@ -150,43 +144,58 @@ export default function AreasPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {areas.map(area => (
-                <TableRow key={area.id} hover>
-                  <TableCell>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{area.name}</Typography>
-                    <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{area.id}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2'>{area.location}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>{area.manager}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant='body2'>Luas: {area.hectares}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>
-                      {area.adoptedTrees} / {area.totalTrees} pohon teradopsi
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {area.legalStatus === 'VERIFIED_SK' ? (
-                      <Chip label='SK Terverifikasi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
-                    ) : (
-                      <Chip label='Menunggu Validasi SK' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {area.publishStatus === 'PUBLISHED' ? (
-                      <Chip label='Dipublikasikan' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
-                    ) : (
-                      <Chip label='Draft' size='small' sx={{ bgcolor: '#F0F0F0', color: '#66756D', fontWeight: 600 }} />
-                    )}
-                  </TableCell>
-                  <TableCell align='right'>
-                    <Button variant='outlined' size='small' sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none' }}>
-                      Detail Polygon
-                    </Button>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
+                    <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat kawasan dari backend...</Typography>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : areas.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada data kawasan dari backend.</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                areas.map(area => (
+                  <TableRow key={area.id} hover>
+                    <TableCell>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{area.name}</Typography>
+                      <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{area.id}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2'>{area.location}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>{area.manager}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body2'>Luas: {area.hectares}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>
+                        {area.adoptedTrees} / {area.totalTrees} pohon teradopsi
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {area.legalStatus === 'VERIFIED_SK' ? (
+                        <Chip label='SK Terverifikasi' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
+                      ) : (
+                        <Chip label='Menunggu Validasi SK' size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 600 }} />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {area.publishStatus === 'PUBLISHED' ? (
+                        <Chip label='Dipublikasikan' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
+                      ) : (
+                        <Chip label='Draft' size='small' sx={{ bgcolor: '#F0F0F0', color: '#66756D', fontWeight: 600 }} />
+                      )}
+                    </TableCell>
+                    <TableCell align='right'>
+                      <Button variant='outlined' size='small' sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none' }}>
+                        Detail Polygon
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
