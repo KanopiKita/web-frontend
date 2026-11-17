@@ -131,10 +131,10 @@ export default function EvidenceCenterPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
-        <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+        <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
           Pusat Dokumen Legalitas & Bukti Lapangan
         </Typography>
-        <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+        <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
           Pengarsipan dokumen SK hak kelola kawasan serta dokumentasi foto bukti survei lapangan ber-geotag GPS.
         </Typography>
       </Box>
@@ -142,7 +142,7 @@ export default function EvidenceCenterPage() {
       {/* Section 1: Galeri Bukti Lapangan EXIF GPS */}
       <Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5 }}>
-          <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Galeri Bukti Foto Survei Lapangan (EXIF Geotag & Checksum SHA-256)
           </Typography>
           <Chip label={`${evidenceList.length} Media Terverifikasi`} size='small' color='success' sx={{ fontWeight: 700 }} />
@@ -194,16 +194,16 @@ export default function EvidenceCenterPage() {
                   </Box>
 
                   <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                    <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                       {ev.species}
                     </Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>
+                    <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                       Petugas: <strong>{ev.surveyor}</strong>
                     </Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>
+                    <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                       Waktu Rekam: {ev.capturedAt}
                     </Typography>
-                    <Typography variant='caption' sx={{ color: '#485B50', fontStyle: 'italic', mt: 0.5 }}>
+                    <Typography variant='caption' sx={{ color: 'text.secondary', fontStyle: 'italic', mt: 0.5 }}>
                       "{ev.notes}"
                     </Typography>
                     <Box sx={{ mt: 'auto', pt: 2 }}>
@@ -251,7 +251,7 @@ export default function EvidenceCenterPage() {
               {legalDocs.map(doc => (
                 <TableRow key={doc.id} hover>
                   <TableCell>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{doc.docTitle}</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{doc.docTitle}</Typography>
                     <Typography variant='caption' sx={{ color: '#176B4D', fontFamily: 'monospace' }}>{doc.docUrl}</Typography>
                   </TableCell>
                   <TableCell><Typography variant='body2'>{doc.areaName}</Typography></TableCell>
@@ -285,46 +285,46 @@ export default function EvidenceCenterPage() {
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {selectedEvidence && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F4FAF6', borderRadius: '10px', border: '1px solid #C6E3D2' }}>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '10px', border: '1px solid #C6E3D2' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedEvidence.treeCode} — {selectedEvidence.species}
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Kawasan: {selectedEvidence.area} • Surveyor: {selectedEvidence.surveyor}
                 </Typography>
               </Box>
 
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Koordinat Geotag EXIF</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Koordinat Geotag EXIF</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 700 }}>
                     {selectedEvidence.lat}, {selectedEvidence.lon}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Akurasi Sensor GPS</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Akurasi Sensor GPS</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 700, color: '#21865B' }}>
                     ±{selectedEvidence.accuracyM} Meter (Valid Dalam Polygon)
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Tipe Tugas</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Tipe Tugas</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedEvidence.taskType}</Typography>
                 </Box>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Timestamp Perangkat</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Timestamp Perangkat</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedEvidence.capturedAt}</Typography>
                 </Box>
               </Box>
 
               <Box>
-                <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mb: 0.5 }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
                   Checksum Integritas Berkas (SHA-256):
                 </Typography>
                 <Box
                   sx={{
                     p: 1.5,
-                    bgcolor: '#17251E',
+                    bgcolor: 'text.primary',
                     color: '#C8E66A',
                     borderRadius: '8px',
                     fontFamily: 'monospace',

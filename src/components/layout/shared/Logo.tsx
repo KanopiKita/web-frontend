@@ -92,10 +92,10 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
         transitionDuration={transitionDuration}
         isBreakpointReached={isBreakpointReached}
       >
-        <span style={{ fontSize: '1.15rem', fontWeight: 800, color: color ?? '#17251E', letterSpacing: '-0.2px' }}>
+        <span style={{ fontSize: '1.15rem', fontWeight: 800, color: color ?? 'var(--mui-palette-text-primary)', letterSpacing: '-0.2px' }}>
           {themeConfig.templateName}
         </span>
-        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#176B4D', letterSpacing: '0.06em' }}>
+        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--mui-palette-primary-main)', letterSpacing: '0.06em' }}>
           BACKOFFICE v2.0
         </span>
       </LogoTextContainer>

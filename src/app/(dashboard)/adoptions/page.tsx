@@ -175,10 +175,10 @@ export default function AdoptionsPage() {
       {/* Page Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Transaksi, Rekonsiliasi & Katalog Paket Adopsi
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Pengelolaan katalog paket adopsi pohon, pemesanan kontribusi, rekonsiliasi pembayaran, dan penerbitan sertifikat digital.
           </Typography>
         </Box>
@@ -210,13 +210,13 @@ export default function AdoptionsPage() {
 
       {/* Packages Grid */}
       <Box>
-        <Typography variant='h6' sx={{ fontWeight: 700, mb: 2, color: '#17251E' }}>
+        <Typography variant='h6' sx={{ fontWeight: 700, mb: 2, color: 'text.primary' }}>
           Katalog Paket Adopsi Pohon Resmi
         </Typography>
         {loading ? (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3 }}>
             <CircularProgress size={24} sx={{ color: '#176B4D' }} />
-            <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat katalog paket adopsi...</Typography>
+            <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat katalog paket adopsi...</Typography>
           </Box>
         ) : (
           <Grid container spacing={4}>
@@ -225,7 +225,7 @@ export default function AdoptionsPage() {
                 <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0' }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                      <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E' }}>
+                      <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary' }}>
                         {pkg.name}
                       </Typography>
                       <Chip label={pkg.active ? 'Aktif' : 'Non-aktif'} size='small' color='success' sx={{ fontWeight: 600 }} />
@@ -233,7 +233,7 @@ export default function AdoptionsPage() {
                     <Typography variant='h4' sx={{ color: '#176B4D', fontWeight: 800, my: 1 }}>
                       Rp {Number(pkg.amount).toLocaleString('id-ID')}
                     </Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D', display: 'block' }}>
+                    <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block' }}>
                       Kuota Nama Sertifikat: {pkg.minNames} - {pkg.maxNames} Orang • Versi Polis: v{pkg.policyVersion}
                     </Typography>
                   </CardContent>
@@ -271,19 +271,19 @@ export default function AdoptionsPage() {
                 <TableRow key={order.orderId} hover>
                   <TableCell>
                     <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D' }}>{order.orderId}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>{order.date}</Typography>
+                    <Typography variant='caption' sx={{ color: 'text.secondary' }}>{order.date}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>{order.adopterName}</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>{order.adopterName}</Typography>
                     <Chip label={order.adopterType} size='small' sx={{ fontSize: '0.65rem', height: 20, bgcolor: '#F0F0F0' }} />
                   </TableCell>
                   <TableCell>
                     <Typography variant='body2' sx={{ fontWeight: 600 }}>{order.treeCode}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>{order.area}</Typography>
+                    <Typography variant='caption' sx={{ color: 'text.secondary' }}>{order.area}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{order.amount}</Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D' }}>{order.gateway}</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{order.amount}</Typography>
+                    <Typography variant='caption' sx={{ color: 'text.secondary' }}>{order.gateway}</Typography>
                   </TableCell>
                   <TableCell>
                     {order.status === 'PAID' ? (
@@ -358,7 +358,7 @@ export default function AdoptionsPage() {
             </TextField>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenCreateOrder(false)} sx={{ color: '#66756D' }}>Batal</Button>
+            <Button onClick={() => setOpenCreateOrder(false)} sx={{ color: 'text.secondary' }}>Batal</Button>
             <Button
               type='submit'
               variant='contained'

@@ -117,10 +117,10 @@ export default function MasterSpeciesPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Master Data Spesies Pohon & Taksonomi
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Referensi taksonomi spesies pohon untuk kegiatan survei lapangan dan katalog adopsi.
           </Typography>
         </Box>
@@ -149,8 +149,8 @@ export default function MasterSpeciesPage() {
                 <i className='ri-seedling-fill' style={{ fontSize: '1.5rem' }} />
               </Box>
               <Box>
-                <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>{speciesList.length} Spesies</Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Total Taksonomi Terdaftar</Typography>
+                <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>{speciesList.length} Spesies</Typography>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>Total Taksonomi Terdaftar</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -162,10 +162,10 @@ export default function MasterSpeciesPage() {
                 <i className='ri-earth-fill' style={{ fontSize: '1.5rem' }} />
               </Box>
               <Box>
-                <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+                <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
                   {speciesList.filter(s => s.native).length} Endemik / Asli
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Spesies Nusantara (Native Species)</Typography>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>Spesies Nusantara (Native Species)</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -177,8 +177,8 @@ export default function MasterSpeciesPage() {
                 <i className='ri-shield-star-fill' style={{ fontSize: '1.5rem' }} />
               </Box>
               <Box>
-                <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>IUCN Red List</Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Terstandarisasi Konservasi Global</Typography>
+                <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>IUCN Red List</Typography>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>Terstandarisasi Konservasi Global</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -220,7 +220,7 @@ export default function MasterSpeciesPage() {
                 <TableRow>
                   <TableCell colSpan={5} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={30} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat master spesies dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat master spesies dari backend...</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -229,7 +229,7 @@ export default function MasterSpeciesPage() {
                   return (
                     <TableRow key={sp.id} hover>
                       <TableCell>
-                        <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{sp.localName}</Typography>
+                        <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{sp.localName}</Typography>
                         <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#176B4D', fontWeight: 600 }}>
                           {sp.scientificName}
                         </Typography>
@@ -241,7 +241,7 @@ export default function MasterSpeciesPage() {
                         {sp.native ? (
                           <Chip label='Endemik / Native' size='small' sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 600 }} />
                         ) : (
-                          <Chip label='Introduksi / Non-Native' size='small' sx={{ bgcolor: '#F0F0F0', color: '#66756D', fontWeight: 600 }} />
+                          <Chip label='Introduksi / Non-Native' size='small' sx={{ bgcolor: '#F0F0F0', color: 'text.secondary', fontWeight: 600 }} />
                         )}
                       </TableCell>
                       <TableCell>
@@ -306,7 +306,7 @@ export default function MasterSpeciesPage() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenModal(false)} sx={{ color: '#66756D' }}>Batal</Button>
+            <Button onClick={() => setOpenModal(false)} sx={{ color: 'text.secondary' }}>Batal</Button>
             <Button
               type='submit'
               variant='contained'

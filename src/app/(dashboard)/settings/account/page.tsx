@@ -108,10 +108,10 @@ export default function AccountSettingsPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
-        <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+        <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
           Kelola Akun, Profil & Hak Akses
         </Typography>
-        <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+        <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
           Pengaturan informasi identitas pengguna, kata sandi, serta daftar hak akses peran Anda.
         </Typography>
       </Box>
@@ -140,10 +140,10 @@ export default function AccountSettingsPage() {
                     sx={{ width: 68, height: 68, border: '3px solid #E7F3EC' }}
                   />
                   <Box>
-                    <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E' }}>
+                    <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary' }}>
                       {profile?.name || 'Super Admin Kanopi'}
                     </Typography>
-                    <Typography variant='body2' sx={{ color: '#66756D', mb: 1 }}>
+                    <Typography variant='body2' sx={{ color: 'text.secondary', mb: 1 }}>
                       {profile?.email || 'admin@kanopikita.id'}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -155,7 +155,7 @@ export default function AccountSettingsPage() {
                       <Chip
                         label={`ORG ID: ${(profile?.org_id || '00000000-0001').substring(0, 13)}...`}
                         size='small'
-                        sx={{ bgcolor: '#F0F0F0', color: '#66756D', fontWeight: 600 }}
+                        sx={{ bgcolor: '#F0F0F0', color: 'text.secondary', fontWeight: 600 }}
                       />
                     </Box>
                   </Box>
@@ -215,7 +215,7 @@ export default function AccountSettingsPage() {
                   title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Pindah Sesi Akun Cepat (Multi-Role Test)</Typography>}
                 />
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  <Typography variant='caption' sx={{ color: '#66756D', mb: 1 }}>
+                  <Typography variant='caption' sx={{ color: 'text.secondary', mb: 1 }}>
                     Beralih peran untuk meninjau tampilan dashboard sesuai tingkat wewenang:
                   </Typography>
                   {DEMO_ACCOUNTS.map(acc => {
@@ -235,10 +235,10 @@ export default function AccountSettingsPage() {
                         }}
                       >
                         <Box>
-                          <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                          <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                             {acc.label}
                           </Typography>
-                          <Typography variant='caption' sx={{ color: '#66756D' }}>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                             {acc.email} • <strong>{acc.role}</strong>
                           </Typography>
                         </Box>
@@ -278,7 +278,7 @@ export default function AccountSettingsPage() {
                         key={cap}
                         label={cap}
                         size='small'
-                        sx={{ bgcolor: '#F6FAF7', border: '1px solid #C6E3D2', color: '#176B4D', fontWeight: 600, fontFamily: 'monospace' }}
+                        sx={{ bgcolor: 'action.hover', border: '1px solid #C6E3D2', color: '#176B4D', fontWeight: 600, fontFamily: 'monospace' }}
                       />
                     ))}
                   </Box>

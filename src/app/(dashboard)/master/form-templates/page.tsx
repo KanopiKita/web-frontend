@@ -91,10 +91,10 @@ export default function FormTemplatesPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Master Template Form Survei Lapangan
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Konfigurasi variabel input dinamis dan aturan kelengkapan foto bukti untuk kegiatan survei lapangan.
           </Typography>
         </Box>
@@ -117,7 +117,7 @@ export default function FormTemplatesPage() {
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
           <CircularProgress size={34} sx={{ color: '#176B4D', mb: 2 }} />
-          <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat skema form survei dari backend...</Typography>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat skema form survei dari backend...</Typography>
         </Box>
       ) : (
         <Grid container spacing={4}>
@@ -143,7 +143,7 @@ export default function FormTemplatesPage() {
                     </Box>
 
                     <Box>
-                      <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E' }}>
+                      <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary' }}>
                         {TASK_LABELS[tpl.taskType] || tpl.taskType}
                       </Typography>
                       <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>
@@ -151,8 +151,8 @@ export default function FormTemplatesPage() {
                       </Typography>
                     </Box>
 
-                    <Box sx={{ p: 2, bgcolor: '#F6FAF7', borderRadius: '10px', flex: 1 }}>
-                      <Typography variant='caption' sx={{ fontWeight: 700, color: '#485B50', display: 'block', mb: 1 }}>
+                    <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '10px', flex: 1 }}>
+                      <Typography variant='caption' sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 1 }}>
                         FIELD INPUT ({fields.length} Variabel):
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -168,7 +168,7 @@ export default function FormTemplatesPage() {
                     </Box>
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                         📸 Foto: {rules.min_photos ?? 1}–{rules.max_photos ?? 5} • 📍 GPS Wajib
                       </Typography>
                       <Button
@@ -198,7 +198,7 @@ export default function FormTemplatesPage() {
             component='pre'
             sx={{
               p: 2.5,
-              bgcolor: '#17251E',
+              bgcolor: 'text.primary',
               color: '#C8E66A',
               borderRadius: '10px',
               fontSize: '0.75rem',
@@ -268,7 +268,7 @@ export default function FormTemplatesPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenCreate(false)} sx={{ color: '#66756D' }}>Batal</Button>
+            <Button onClick={() => setOpenCreate(false)} sx={{ color: 'text.secondary' }}>Batal</Button>
             <Button type='submit' variant='contained' disabled={submitting} sx={{ bgcolor: '#176B4D', color: '#ffffff', fontWeight: 600 }}>
               {submitting ? 'Menerbitkan...' : 'Terbitkan Template'}
             </Button>

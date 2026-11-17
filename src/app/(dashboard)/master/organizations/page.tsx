@@ -96,10 +96,10 @@ export default function MasterOrganizationsPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Master Organisasi & Lembaga Pengelola Kawasan
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Manajemen yayasan konservasi, LPHA hutan adat, instansi pemerintah, dan mitra CSR korporasi.
           </Typography>
         </Box>
@@ -144,14 +144,14 @@ export default function MasterOrganizationsPage() {
                 <TableRow>
                   <TableCell colSpan={5} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={30} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat daftar organisasi dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat daftar organisasi dari backend...</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
                 orgs.map(org => (
                   <TableRow key={org.id} hover>
                     <TableCell>
-                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{org.name}</Typography>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{org.name}</Typography>
                       <Typography variant='caption' sx={{ color: '#176B4D' }}>ID: {org.id}</Typography>
                     </TableCell>
                     <TableCell>
@@ -159,7 +159,7 @@ export default function MasterOrganizationsPage() {
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>{org.contact?.email || 'info@kanopikita.id'}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{org.contact?.phone || '+6281234567890'}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{org.contact?.phone || '+6281234567890'}</Typography>
                     </TableCell>
                     <TableCell>
                       {org.verifyStatus === 'VERIFIED' ? (
@@ -239,7 +239,7 @@ export default function MasterOrganizationsPage() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenModal(false)} sx={{ color: '#66756D' }}>Batal</Button>
+            <Button onClick={() => setOpenModal(false)} sx={{ color: 'text.secondary' }}>Batal</Button>
             <Button type='submit' variant='contained' disabled={submitting} sx={{ bgcolor: '#176B4D', color: '#ffffff', fontWeight: 600 }}>
               {submitting ? 'Menyimpan...' : 'Simpan Organisasi'}
             </Button>

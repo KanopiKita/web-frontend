@@ -147,10 +147,10 @@ export default function AuditLogPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Log Audit & Riwayat Aktivitas Operasional
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Rekam jejak aktivitas pengguna, pengiriman survei lapangan, publikasi kawasan, dan transaksi adopsi pohon.
           </Typography>
         </Box>
@@ -214,12 +214,12 @@ export default function AuditLogPage() {
                         size='small'
                         sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 700 }}
                       />
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{ev.timestamp}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{ev.timestamp}</Typography>
                     </Box>
-                    <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                    <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                       {ev.action}
                     </Typography>
-                    <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mt: 0.25 }}>
+                    <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}>
                       Oleh: <strong>{ev.actor}</strong> ({ev.role}) • Target: {ev.target}
                     </Typography>
                   </Box>
@@ -255,14 +255,14 @@ export default function AuditLogPage() {
                       <TableRow key={ev.id} hover>
                         <TableCell>
                           <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D' }}>{ev.id}</Typography>
-                          <Typography variant='caption' sx={{ color: '#66756D' }}>{ev.timestamp}</Typography>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>{ev.timestamp}</Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant='body2' sx={{ fontWeight: 600 }}>{ev.actor}</Typography>
                           <Chip label={ev.role} size='small' sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#F0F0F0', fontWeight: 700 }} />
                         </TableCell>
                         <TableCell>
-                          <Typography variant='body2' sx={{ color: '#17251E' }}>{ev.action}</Typography>
+                          <Typography variant='body2' sx={{ color: 'text.primary' }}>{ev.action}</Typography>
                           <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{ev.target}</Typography>
                         </TableCell>
                         <TableCell align='right'>

@@ -142,12 +142,12 @@ export default function CalendarPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+            <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
               Jadwal Penugasan & Monitoring Berkala
             </Typography>
             <Chip label={`${scheduleItems.length} Penugasan Aktif`} size='small' color='success' sx={{ fontWeight: 600 }} />
           </Box>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Pengaturan jadwal pemantauan pohon teradopsi dan penugasan surveyor lapangan.
           </Typography>
         </Box>
@@ -170,7 +170,7 @@ export default function CalendarPage() {
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
           <CircularProgress size={36} sx={{ color: '#176B4D', mb: 2 }} />
-          <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat jadwal penugasan dari backend...</Typography>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat jadwal penugasan dari backend...</Typography>
         </Box>
       ) : (
         <Grid container spacing={5} sx={{ width: '100%', m: 0 }}>
@@ -186,16 +186,16 @@ export default function CalendarPage() {
                     />
                     <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 700 }}>{item.code}</Typography>
                   </Box>
-                  <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E', mb: 1.5 }}>
+                  <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary', mb: 1.5 }}>
                     {item.title}
                   </Typography>
-                  <Typography variant='body2' sx={{ color: '#66756D', mb: 0.5 }}>
+                  <Typography variant='body2' sx={{ color: 'text.secondary', mb: 0.5 }}>
                     Lokasi: <strong>{item.area}</strong>
                   </Typography>
-                  <Typography variant='body2' sx={{ color: '#66756D', mb: 0.5 }}>
+                  <Typography variant='body2' sx={{ color: 'text.secondary', mb: 0.5 }}>
                     Petugas: <strong>{item.surveyor}</strong>
                   </Typography>
-                  <Typography variant='body2' sx={{ color: '#66756D', mb: 2 }}>
+                  <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>
                     Status: <strong>{item.status}</strong> ({item.submissionsCount} Laporan Masuk)
                   </Typography>
                   <Box sx={{ mt: 'auto', pt: 2, borderTop: '1px solid #F0F0F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -226,7 +226,7 @@ export default function CalendarPage() {
       {/* Modal Buat Penugasan */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth='sm' fullWidth>
         <form onSubmit={handleCreateAssignment}>
-          <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+          <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
             Buat Jadwal Penugasan Surveyor Baru
           </DialogTitle>
           <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -289,7 +289,7 @@ export default function CalendarPage() {
             />
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setOpenModal(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+            <Button onClick={() => setOpenModal(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
               Batal
             </Button>
             <Button
@@ -306,17 +306,17 @@ export default function CalendarPage() {
 
       {/* Modal Detail Penugasan */}
       <Dialog open={Boolean(selectedItem)} onClose={() => setSelectedItem(null)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Detail Penugasan Lapangan
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {selectedItem && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '8px' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedItem.code} — {selectedItem.title}
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Tenggat: {selectedItem.date} • Status: {selectedItem.status}
                 </Typography>
               </Box>

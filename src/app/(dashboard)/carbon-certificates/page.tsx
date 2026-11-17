@@ -95,10 +95,10 @@ export default function CarbonCertificatesPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Sertifikat Adopsi Digital & Metodologi Karbon
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Verifikasi keaslian sertifikat adopsi pohon, pratinjau cetak sertifikat PDF, dan kalkulasi serapan biomassa karbon.
           </Typography>
         </Box>
@@ -110,7 +110,7 @@ export default function CarbonCertificatesPage() {
           <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', height: '100%' }}>
             <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Metodologi Allometrik Biomassa Aktif</Typography>} />
             <CardContent>
-              <Typography variant='body2' sx={{ color: '#66756D', mb: 2 }}>
+              <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>
                 Kalkulasi serapan karbon menggunakan persamaan allometrik spesifik ekosistem Mangrove & Hutan Tropis Lembap berdasarkan variabel DBH (Diameter at Breast Height) dan berat jenis kayu spesies.
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
@@ -187,7 +187,7 @@ export default function CarbonCertificatesPage() {
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat sertifikat dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat sertifikat dari backend...</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -197,7 +197,7 @@ export default function CarbonCertificatesPage() {
                     <TableCell><Typography variant='body2' sx={{ fontWeight: 600 }}>{c.recipient}</Typography></TableCell>
                     <TableCell>
                       <Typography variant='body2' sx={{ fontWeight: 600 }}>{c.treeCode} — {c.species}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{c.area}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{c.area}</Typography>
                     </TableCell>
                     <TableCell><Typography variant='body2' sx={{ fontWeight: 700, color: '#21865B' }}>{c.carbonOffset}</Typography></TableCell>
                     <TableCell><Typography variant='body2'>{c.issuedDate}</Typography></TableCell>
@@ -252,18 +252,18 @@ export default function CarbonCertificatesPage() {
                 label='SERTIFIKAT ADOPSI POHON & KONTRIBUSI KARBON TERVERIFIKASI'
                 sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 800, mb: 2, letterSpacing: '0.06em' }}
               />
-              <Typography variant='h4' sx={{ fontWeight: 800, color: '#17251E', mb: 0.5 }}>
+              <Typography variant='h4' sx={{ fontWeight: 800, color: 'text.primary', mb: 0.5 }}>
                 KANOPI KITA INDONESIA
               </Typography>
-              <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mb: 3 }}>
+              <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mb: 3 }}>
                 Nomor Seri Kriptografis: <strong>{previewCert.id}</strong> • Tanggal Terbit: {previewCert.issuedDate}
               </Typography>
 
-              <Typography variant='body2' sx={{ color: '#66756D' }}>Diberikan dengan hormat kepada:</Typography>
+              <Typography variant='body2' sx={{ color: 'text.secondary' }}>Diberikan dengan hormat kepada:</Typography>
               <Typography variant='h4' sx={{ fontWeight: 800, color: '#176B4D', my: 1.5 }}>
                 {previewCert.recipient}
               </Typography>
-              <Typography variant='body2' sx={{ color: '#485B50', maxWidth: 580, mx: 'auto', mb: 3 }}>
+              <Typography variant='body2' sx={{ color: 'text.secondary', maxWidth: 580, mx: 'auto', mb: 3 }}>
                 Atas kontribusi nyata dalam pemeliharaan ekosistem hutan dan adopsi pohon terdaftar yang dipantau secara berkala melalui sistem pemantauan geospasial Kanopi Kita.
               </Typography>
 
@@ -271,20 +271,20 @@ export default function CarbonCertificatesPage() {
 
               <Grid container spacing={2} sx={{ textAlign: 'left', maxWidth: 620, mx: 'auto', mb: 3 }}>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Kode Tag & Spesies Pohon:</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Kode Tag & Spesies Pohon:</Typography>
+                  <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                     {previewCert.treeCode} — {previewCert.species}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Estimasi Serapan Biomassa:</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Estimasi Serapan Biomassa:</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 700, color: '#21865B' }}>
                     {previewCert.carbonOffset} (Chave et al.)
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12 }}>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Lokasi Kawasan Konservasi:</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Lokasi Kawasan Konservasi:</Typography>
+                  <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                     {previewCert.area} (Koordinat GPS: -5.9746, 107.0231)
                   </Typography>
                 </Grid>
@@ -292,8 +292,8 @@ export default function CarbonCertificatesPage() {
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4, px: 2, flexWrap: 'wrap', gap: 2 }}>
                 <Box sx={{ textAlign: 'left' }}>
-                  <Typography variant='caption' sx={{ color: '#66756D', display: 'block' }}>Pengelola Kawasan Resmi:</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E', mt: 1 }}>
+                  <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block' }}>Pengelola Kawasan Resmi:</Typography>
+                  <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary', mt: 1 }}>
                     Yayasan Kanopi Kita Indonesia
                   </Typography>
                   <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>
@@ -315,7 +315,7 @@ export default function CarbonCertificatesPage() {
                 >
                   <i className='ri-qr-code-line' style={{ fontSize: '2.4rem', color: '#176B4D' }} />
                   <Box sx={{ textAlign: 'left' }}>
-                    <Typography variant='caption' sx={{ fontWeight: 800, color: '#17251E', display: 'block' }}>
+                    <Typography variant='caption' sx={{ fontWeight: 800, color: 'text.primary', display: 'block' }}>
                       SCAN VERIFIKASI RESMI
                     </Typography>
                     <Typography variant='caption' sx={{ color: '#176B4D', fontFamily: 'monospace', fontSize: '0.68rem' }}>
@@ -328,7 +328,7 @@ export default function CarbonCertificatesPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPreviewCert(null)} sx={{ color: '#66756D' }}>
+          <Button onClick={() => setPreviewCert(null)} sx={{ color: 'text.secondary' }}>
             Tutup
           </Button>
           <Button

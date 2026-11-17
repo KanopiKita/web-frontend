@@ -54,6 +54,24 @@ export default function AreasPage() {
   const [newName, setNewName] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newDocUrl, setNewDocUrl] = useState('https://kanopiindonesia.id/docs/sk-kawasan-baru.pdf')
+  const [customGeoJson, setCustomGeoJson] = useState(
+    JSON.stringify(
+      {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [107.036, -5.966],
+            [107.048, -5.966],
+            [107.048, -5.978],
+            [107.036, -5.978],
+            [107.036, -5.966]
+          ]
+        ]
+      },
+      null,
+      2
+    )
+  )
   const [submitting, setSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -114,30 +132,60 @@ export default function AreasPage() {
     fetchSpatialData()
   }, [])
 
+  const handleGeoJsonFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      try {
+        const parsed = JSON.parse(String(ev.target?.result || '{}'))
+        const geom =
+          parsed.type === 'FeatureCollection'
+            ? parsed.features?.[0]?.geometry
+            : parsed.type === 'Feature'
+              ? parsed.geometry
+              : parsed
+        if (geom && (geom.type === 'Polygon' || geom.type === 'MultiPolygon')) {
+          setCustomGeoJson(JSON.stringify(geom, null, 2))
+        } else {
+          setFeedback({ type: 'error', message: 'Berkas harus berupa GeoJSON Polygon atau MultiPolygon.' })
+        }
+      } catch {
+        setFeedback({ type: 'error', message: 'Format berkas JSON/GeoJSON tidak valid.' })
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const handleCreateArea = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newName.trim()) return
     setSubmitting(true)
     setFeedback(null)
     try {
-      const samplePolygon = {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [107.036, -5.966],
-            [107.048, -5.966],
-            [107.048, -5.978],
-            [107.036, -5.978],
-            [107.036, -5.966]
-          ]
-        ]
+      let parsedPolygon: any = null
+      try {
+        const raw = JSON.parse(customGeoJson)
+        parsedPolygon =
+          raw.type === 'FeatureCollection'
+            ? raw.features?.[0]?.geometry
+            : raw.type === 'Feature'
+              ? raw.geometry
+              : raw
+      } catch {
+        throw new Error('Format koordinat GeoJSON tidak valid. Pastikan sintaks JSON benar.')
       }
+
+      if (!parsedPolygon || !['Polygon', 'MultiPolygon'].includes(parsedPolygon.type)) {
+        throw new Error('GeoJSON wajib memiliki tipe "Polygon" atau "MultiPolygon".')
+      }
+
       await KanopiApi.createArea({
         name: newName.trim(),
         org_id: '00000000-0000-0000-0000-000000000001',
         description: newDesc.trim() || 'Kawasan konservasi terdaftar di sistem spasial Kanopi Kita.',
         legal_doc_urls: newDocUrl.trim() ? [newDocUrl.trim()] : [],
-        boundaries_geojson: samplePolygon
+        boundaries_geojson: parsedPolygon
       })
       setOpenCreate(false)
       setNewName('')
@@ -170,10 +218,10 @@ export default function AreasPage() {
       {/* Page Title */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Kawasan Konservasi & Peta WebGIS
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D' }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
             Visualisasi interaktif batas wilayah konservasi, sebaran koordinat pohon, dan pengelolaan status publikasi kawasan.
           </Typography>
         </Box>
@@ -210,7 +258,7 @@ export default function AreasPage() {
         />
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
-            <TableHead sx={{ bgcolor: '#F7F9F7' }}>
+            <TableHead sx={{ bgcolor: 'action.hover' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Kode & Nama Kawasan</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Deskripsi & Pengelola</TableCell>
@@ -225,29 +273,29 @@ export default function AreasPage() {
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data kawasan konservasi...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat data kawasan konservasi...</Typography>
                   </TableCell>
                 </TableRow>
               ) : areas.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Belum ada kawasan konservasi terdaftar.</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Belum ada kawasan konservasi terdaftar.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
                 areas.map(area => (
                   <TableRow key={area.id} hover>
                     <TableCell>
-                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{area.name}</Typography>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{area.name}</Typography>
                       <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{area.id}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>{area.location}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{area.manager}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{area.manager}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>Luas: {area.hectares}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                         {area.adoptedTrees} / {area.totalTrees} pohon teradopsi
                       </Typography>
                     </TableCell>
@@ -262,7 +310,7 @@ export default function AreasPage() {
                       {area.publishStatus === 'PUBLISHED' ? (
                         <Chip label='Dipublikasikan' size='small' sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 600 }} />
                       ) : (
-                        <Chip label='Unpublished / Draft' size='small' sx={{ bgcolor: '#F0F0F0', color: '#66756D', fontWeight: 600 }} />
+                        <Chip label='Unpublished / Draft' size='small' sx={{ bgcolor: '#F0F0F0', color: 'text.secondary', fontWeight: 600 }} />
                       )}
                     </TableCell>
                     <TableCell align='right'>
@@ -291,7 +339,7 @@ export default function AreasPage() {
       {/* Modal Ajukan Kawasan Baru */}
       <Dialog open={openCreate} onClose={() => setOpenCreate(false)} maxWidth='sm' fullWidth>
         <form onSubmit={handleCreateArea}>
-          <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+          <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
             Ajukan Kawasan Konservasi & Polygon Baru
           </DialogTitle>
           <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -318,17 +366,41 @@ export default function AreasPage() {
               value={newDocUrl}
               onChange={e => setNewDocUrl(e.target.value)}
             />
-            <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
-              <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D', display: 'block' }}>
-                Koordinat Batas Wilayah (Polygon Geospasial)
-              </Typography>
-              <Typography variant='caption' sx={{ color: '#66756D' }}>
-                Batas wilayah kawasan otomatis divalidasi untuk memastikan akurasi luasan di lapangan.
-              </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D' }}>
+                  Koordinat Batas Wilayah (GeoJSON Polygon / MultiPolygon)
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    component='label'
+                    size='small'
+                    variant='outlined'
+                    startIcon={<i className='ri-upload-2-line' />}
+                    sx={{ borderColor: '#176B4D', color: '#176B4D', fontSize: '0.72rem', py: 0.25 }}
+                  >
+                    Impor File .geojson
+                    <input type='file' hidden accept='.geojson,.json' onChange={handleGeoJsonFileUpload} />
+                  </Button>
+                </Box>
+              </Box>
+              <TextField
+                fullWidth
+                multiline
+                rows={5}
+                value={customGeoJson}
+                onChange={e => setCustomGeoJson(e.target.value)}
+                slotProps={{
+                  input: {
+                    sx: { fontFamily: 'monospace', fontSize: '0.76rem' }
+                  }
+                }}
+                helperText='Tempelkan objek GeoJSON (Polygon, MultiPolygon, atau Feature) hasil pemetaan GIS Anda.'
+              />
             </Box>
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setOpenCreate(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+            <Button onClick={() => setOpenCreate(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
               Batal
             </Button>
             <Button
@@ -345,7 +417,7 @@ export default function AreasPage() {
 
       {/* Modal Detail Polygon GeoJSON */}
       <Dialog open={Boolean(detailArea)} onClose={() => setDetailArea(null)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Detail Batas Wilayah Kawasan
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -355,18 +427,18 @@ export default function AreasPage() {
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {detailArea.name}
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#17251E' }}>
+                <Typography variant='caption' sx={{ color: 'text.primary' }}>
                   ID: {detailArea.id} • Status: {detailArea.publishStatus}
                 </Typography>
               </Box>
-              <Typography variant='caption' sx={{ fontWeight: 700, color: '#66756D' }}>
+              <Typography variant='caption' sx={{ fontWeight: 700, color: 'text.secondary' }}>
                 Koordinat Batas Polygon (GeoJSON):
               </Typography>
               <Box
                 component='pre'
                 sx={{
                   p: 2,
-                  bgcolor: '#17251E',
+                  bgcolor: 'text.primary',
                   color: '#C8E66A',
                   borderRadius: '8px',
                   fontSize: '0.75rem',
@@ -387,7 +459,7 @@ export default function AreasPage() {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setDetailArea(null)} sx={{ textTransform: 'none', color: '#66756D' }}>
+          <Button onClick={() => setDetailArea(null)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
             Tutup
           </Button>
           {detailArea && detailArea.publishStatus !== 'PUBLISHED' && (

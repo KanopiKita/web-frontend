@@ -203,10 +203,10 @@ export default function DashboardPage() {
                     Aktif
                   </Typography>
                 </Box>
-                <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E', mb: 0.5 }}>
+                <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
                   {kpi.value}
                 </Typography>
-                <Typography variant='body2' sx={{ color: '#66756D', fontWeight: 500, mb: 1.5 }}>
+                <Typography variant='body2' sx={{ color: 'text.secondary', fontWeight: 500, mb: 1.5 }}>
                   {kpi.title}
                 </Typography>
                 <Typography variant='caption' sx={{ color: '#889890', display: 'block' }}>
@@ -227,10 +227,10 @@ export default function DashboardPage() {
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
                   <Box sx={{ minWidth: 0, flex: '1 1 240px' }}>
-                    <Typography variant='h6' sx={{ fontWeight: 700, color: '#17251E' }}>
+                    <Typography variant='h6' sx={{ fontWeight: 700, color: 'text.primary' }}>
                       Antrean Verifikasi Lapangan (Survei Pohon)
                     </Typography>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                       Input terbaru dari surveyor mobile yang memerlukan persetujuan sebelum dipublikasikan ke katalog adopsi.
                     </Typography>
                   </Box>
@@ -243,13 +243,13 @@ export default function DashboardPage() {
             />
             <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
               <Table sx={{ minWidth: 650 }}>
-                <TableHead sx={{ bgcolor: '#F7F9F7' }}>
+                <TableHead sx={{ bgcolor: 'action.hover' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, color: '#17251E' }}>ID & Pohon</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#17251E' }}>Kawasan</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#17251E' }}>Surveyor & Waktu</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#17251E' }}>Status</TableCell>
-                    <TableCell align='right' sx={{ fontWeight: 600, color: '#17251E' }}>Aksi</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.primary' }}>ID & Pohon</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.primary' }}>Kawasan</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.primary' }}>Surveyor & Waktu</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.primary' }}>Status</TableCell>
+                    <TableCell align='right' sx={{ fontWeight: 600, color: 'text.primary' }}>Aksi</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -257,10 +257,10 @@ export default function DashboardPage() {
                     <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                          <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                          <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                             {row.speciesLocal}
                           </Typography>
-                          <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D' }}>
+                          <Typography variant='caption' sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
                             {row.speciesLatin}
                           </Typography>
                           <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600, mt: 0.5 }}>
@@ -269,15 +269,15 @@ export default function DashboardPage() {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography variant='body2' sx={{ color: '#17251E' }}>
+                        <Typography variant='body2' sx={{ color: 'text.primary' }}>
                           {row.area}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant='body2' sx={{ color: '#17251E' }}>
+                        <Typography variant='body2' sx={{ color: 'text.primary' }}>
                           {row.surveyor}
                         </Typography>
-                        <Typography variant='caption' sx={{ color: '#66756D' }}>
+                        <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                           {row.date}
                         </Typography>
                       </TableCell>
@@ -335,7 +335,7 @@ export default function DashboardPage() {
                   fullWidth
                   href='/areas'
                   startIcon={<i className='ri-map-pin-add-line' />}
-                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: '#17251E', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: 'text.primary', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
                   Ajukan / Verifikasi Batas Kawasan Baru
                 </Button>
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                   fullWidth
                   href='/trees'
                   startIcon={<i className='ri-checkbox-circle-line' />}
-                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: '#17251E', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: 'text.primary', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
                   Review Batch Pohon Siap Adopsi
                 </Button>
@@ -362,7 +362,7 @@ export default function DashboardPage() {
                   fullWidth
                   href='/master/species'
                   startIcon={<i className='ri-seedling-line' />}
-                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: '#17251E', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  sx={{ justifyContent: 'flex-start', py: 1.5, borderColor: '#DFE7E0', color: 'text.primary', textTransform: 'none', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
                   Kelola Master Spesies & Skema Form
                 </Button>
@@ -384,7 +384,7 @@ export default function DashboardPage() {
               <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>Sehat & Produktif</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>Sehat & Produktif</Typography>
                     <Typography variant='body2' sx={{ fontWeight: 700, color: '#21865B' }}>88.2% (4,278)</Typography>
                   </Box>
                   <LinearProgress variant='determinate' value={88.2} sx={{ height: 8, borderRadius: 4, bgcolor: '#E7F3EC', '& .MuiLinearProgress-bar': { bgcolor: '#21865B' } }} />
@@ -392,7 +392,7 @@ export default function DashboardPage() {
 
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>Butuh Pemulihan / Sakit</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>Butuh Pemulihan / Sakit</Typography>
                     <Typography variant='body2' sx={{ fontWeight: 700, color: '#D99A25' }}>9.4% (456)</Typography>
                   </Box>
                   <LinearProgress variant='determinate' value={9.4} sx={{ height: 8, borderRadius: 4, bgcolor: '#FEF6E6', '& .MuiLinearProgress-bar': { bgcolor: '#D99A25' } }} />
@@ -400,7 +400,7 @@ export default function DashboardPage() {
 
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>Kritis / Butuh Pergantian</Typography>
+                    <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>Kritis / Butuh Pergantian</Typography>
                     <Typography variant='body2' sx={{ fontWeight: 700, color: '#D94B4B' }}>2.4% (116)</Typography>
                   </Box>
                   <LinearProgress variant='determinate' value={2.4} sx={{ height: 8, borderRadius: 4, bgcolor: '#FDECEC', '& .MuiLinearProgress-bar': { bgcolor: '#D94B4B' } }} />

@@ -125,10 +125,10 @@ export default function SurveysPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Review Survei Lapangan & Board Kanban Operasional
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
             Manajemen antrean review hasil survei lapangan, verifikasi ulang, kelayakan adopsi, dan penanganan insiden pohon.
           </Typography>
         </Box>
@@ -166,7 +166,7 @@ export default function SurveysPage() {
             size='small'
             startIcon={<i className='ri-refresh-line' />}
             onClick={fetchQueueAndKanban}
-            sx={{ borderColor: '#DFE7E0', color: '#485B50', fontWeight: 600 }}
+            sx={{ borderColor: '#DFE7E0', color: 'text.secondary', fontWeight: 600 }}
           >
             Sync
           </Button>
@@ -182,16 +182,16 @@ export default function SurveysPage() {
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
           <CircularProgress size={34} sx={{ color: '#176B4D', mb: 2 }} />
-          <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat board kanban & antrean survei dari backend...</Typography>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat board kanban & antrean survei dari backend...</Typography>
         </Box>
       ) : viewMode === 'kanban' ? (
         /* 4-Column Kanban Board (PRD Section 5.2) */
         <Grid container spacing={3.5}>
           {/* Column 1: Antrean Review */}
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <Box sx={{ bgcolor: '#F4FAF6', p: 2.5, borderRadius: '16px', border: '1px solid #DFE7E0', minHeight: 420 }}>
+            <Box sx={{ bgcolor: 'action.hover', p: 2.5, borderRadius: '16px', border: '1px solid #DFE7E0', minHeight: 420 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: 'text.primary' }}>
                   1. ANTREAN REVIEW
                 </Typography>
                 <Chip label={pendingColumns.length} size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
@@ -204,10 +204,10 @@ export default function SurveysPage() {
                         <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D' }}>{item.batchId}</Typography>
                         <Chip label={item.taskType} size='small' sx={{ height: 18, fontSize: '0.62rem' }} />
                       </Box>
-                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                         🌲 {item.treeCode} ({item.totalTreesSubmitted} Pohon)
                       </Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                         Petugas: {item.surveyor}
                       </Typography>
                       <Button
@@ -228,9 +228,9 @@ export default function SurveysPage() {
 
           {/* Column 2: Butuh Verifikasi / Revisi */}
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <Box sx={{ bgcolor: '#FFFBF2', p: 2.5, borderRadius: '16px', border: '1px solid #F3E3C3', minHeight: 420 }}>
+            <Box sx={{ bgcolor: 'action.hover', p: 2.5, borderRadius: '16px', border: '1px solid #F3E3C3', minHeight: 420 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: 'text.primary' }}>
                   2. BUTUH VERIFIKASI ULANG
                 </Typography>
                 <Chip label={revisionColumns.length + 1} size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
@@ -241,7 +241,7 @@ export default function SurveysPage() {
                     <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 1 }}>
                       <Typography variant='caption' sx={{ fontWeight: 700, color: '#D99A25' }}>{item.batchId}</Typography>
                       <Typography variant='body2' sx={{ fontWeight: 700 }}>{item.treeCode}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{item.notes}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{item.notes}</Typography>
                     </CardContent>
                   </Card>
                 ))}
@@ -255,7 +255,7 @@ export default function SurveysPage() {
                           <Chip label='ATTENTION' size='small' sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
                         </Box>
                         <Typography variant='body2' sx={{ fontWeight: 700 }}>{t.species?.localName}</Typography>
-                        <Typography variant='caption' sx={{ color: '#66756D' }}>
+                        <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                           Kondisi tajuk perlu pemantauan ulang oleh surveyor.
                         </Typography>
                       </CardContent>
@@ -267,9 +267,9 @@ export default function SurveysPage() {
 
           {/* Column 3: Disetujui (Eligible Adopsi) */}
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <Box sx={{ bgcolor: '#F2F9F5', p: 2.5, borderRadius: '16px', border: '1px solid #C6E3D2', minHeight: 420 }}>
+            <Box sx={{ bgcolor: 'action.hover', p: 2.5, borderRadius: '16px', border: '1px solid #C6E3D2', minHeight: 420 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: 'text.primary' }}>
                   3. DISETUJUI (ELIGIBLE)
                 </Typography>
                 <Chip
@@ -296,10 +296,10 @@ export default function SurveysPage() {
                           <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D' }}>🌲 {t.treeCode}</Typography>
                           <Chip label='ELIGIBLE' size='small' sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 700 }} />
                         </Box>
-                        <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                        <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                           {t.species?.localName}
                         </Typography>
-                        <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D' }}>
+                        <Typography variant='caption' sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
                           {t.species?.scientificName}
                         </Typography>
                       </CardContent>
@@ -311,7 +311,7 @@ export default function SurveysPage() {
 
           {/* Column 4: Insiden Pohon Tumbang / Sakit */}
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <Box sx={{ bgcolor: '#FDF4F4', p: 2.5, borderRadius: '16px', border: '1px solid #F5CECE', minHeight: 420 }}>
+            <Box sx={{ bgcolor: 'action.hover', p: 2.5, borderRadius: '16px', border: '1px solid #F5CECE', minHeight: 420 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                 <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#D94B4B' }}>
                   4. INSIDEN POHON
@@ -332,7 +332,7 @@ export default function SurveysPage() {
                           sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 700 }}
                         />
                       </Box>
-                      <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>
+                      <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
                         {inc.description}
                       </Typography>
                       <Button
@@ -378,11 +378,11 @@ export default function SurveysPage() {
                   <TableRow key={item.id} hover>
                     <TableCell>
                       <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D' }}>{item.batchId}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{item.date} • {item.taskType}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{item.date} • {item.taskType}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>{item.area}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>Penugasan: {item.assignmentCode}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>Penugasan: {item.assignmentCode}</Typography>
                     </TableCell>
                     <TableCell><Typography variant='body2'>{item.surveyor}</Typography></TableCell>
                     <TableCell>
@@ -423,28 +423,28 @@ export default function SurveysPage() {
 
       {/* Modal Detail & Review Batch */}
       <Dialog open={Boolean(selectedBatch)} onClose={() => setSelectedBatch(null)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Review Pengiriman Batch Survei Lapangan
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {selectedBatch && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '8px' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedBatch.batchId} ({selectedBatch.assignmentCode})
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Kawasan: {selectedBatch.area} • Petugas: {selectedBatch.surveyor}
                 </Typography>
               </Box>
 
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Pohon Utama</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Pohon Utama</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedBatch.treeCode} ({selectedBatch.totalTreesSubmitted} Pohon)</Typography>
                 </Box>
                 <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Dimensi Sampel</Typography>
+                  <Typography variant='caption' sx={{ color: 'text.secondary' }}>Dimensi Sampel</Typography>
                   <Typography variant='body2' sx={{ fontWeight: 600 }}>
                     DBH {selectedBatch.diameterCm || 25} cm • Tinggi {selectedBatch.heightM || 6} m
                   </Typography>
@@ -452,7 +452,7 @@ export default function SurveysPage() {
               </Box>
 
               <Box>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Catatan Lapangan Surveyor:</Typography>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>Catatan Lapangan Surveyor:</Typography>
                 <Typography variant='body2' sx={{ fontStyle: 'italic', mt: 0.5 }}>{selectedBatch.notes}</Typography>
               </Box>
 
@@ -469,7 +469,7 @@ export default function SurveysPage() {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button onClick={() => setSelectedBatch(null)} sx={{ color: '#66756D' }}>
+          <Button onClick={() => setSelectedBatch(null)} sx={{ color: 'text.secondary' }}>
             Batal
           </Button>
           <Button

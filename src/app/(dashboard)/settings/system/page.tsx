@@ -92,10 +92,10 @@ export default function SystemSettingsPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
-        <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+        <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
           Pengaturan Peta, Pembayaran & Sistem
         </Typography>
-        <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+        <Typography variant='body2' sx={{ color: 'text.secondary', mt: 0.5 }}>
           Konfigurasi kredensial peta interaktif Mapbox, pemantauan status layanan sistem, dan pengujian konfirmasi pembayaran.
         </Typography>
       </Box>
@@ -125,7 +125,7 @@ export default function SystemSettingsPage() {
             />
             <CardContent>
               <form onSubmit={handleSaveMapCredentials} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <Typography variant='body2' sx={{ color: '#66756D' }}>
+                <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                   Masukkan <strong>Mapbox Public Access Token</strong> Anda untuk mengaktifkan vector tiles resmi Mapbox (<code>mapbox://styles/mapbox/satellite-streets-v12</code>). Jika dikosongkan, komponen WebGIS menggunakan citra satelit Esri World Imagery & OpenStreetMap di atas engine WebGL.
                 </Typography>
 
@@ -192,14 +192,14 @@ export default function SystemSettingsPage() {
               }
             />
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ p: 2, bgcolor: '#F6FAF7', borderRadius: '10px', border: '1px solid #DFE7E0' }}>
-                <Typography variant='caption' sx={{ color: '#66756D', display: 'block' }}>Tautan Layanan Data:</Typography>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '10px', border: '1px solid #DFE7E0' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block' }}>Tautan Layanan Data:</Typography>
                 <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D', fontFamily: 'monospace' }}>
                   {getApiBaseUrl()}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Layanan Pemetaan & Basis Data: <strong>Aktif & Terhubung</strong>
                 </Typography>
                 <Button
@@ -219,7 +219,7 @@ export default function SystemSettingsPage() {
           <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0' }}>
             <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Konfirmasi Manual / Simulasi Pembayaran</Typography>} />
             <CardContent>
-              <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mb: 2 }}>
+              <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mb: 2 }}>
                 Konfirmasi pelunasan transaksi adopsi pohon untuk menerbitkan sertifikat secara otomatis:
               </Typography>
                 <form onSubmit={handleSimulateWebhook} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

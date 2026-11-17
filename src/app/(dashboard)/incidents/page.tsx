@@ -126,10 +126,10 @@ export default function IncidentsPage() {
       {/* Page Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Triage Insiden & Penggantian Pohon
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D' }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
             Penanganan laporan pohon sakit/tumbang, penugasan inspeksi surveyor, dan alokasi pergantian pohon.
           </Typography>
         </Box>
@@ -161,7 +161,7 @@ export default function IncidentsPage() {
         />
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
-            <TableHead sx={{ bgcolor: '#F7F9F7' }}>
+            <TableHead sx={{ bgcolor: 'action.hover' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>ID Tiket & Tanggal</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Pohon & Kawasan</TableCell>
@@ -176,13 +176,13 @@ export default function IncidentsPage() {
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data insiden dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat data insiden dari backend...</Typography>
                   </TableCell>
                 </TableRow>
               ) : incidents.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada tiket insiden aktif.</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Tidak ada tiket insiden aktif.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -190,14 +190,14 @@ export default function IncidentsPage() {
                   <TableRow key={inc.id} hover>
                     <TableCell>
                       <Typography variant='body2' sx={{ fontWeight: 700, color: '#D94B4B' }}>{inc.ticketCode}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{inc.reportDate}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{inc.reportDate}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D' }}>{inc.treeId}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{inc.area}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{inc.area}</Typography>
                     </TableCell>
                     <TableCell sx={{ maxWidth: 280 }}>
-                      <Typography variant='body2' sx={{ color: '#17251E' }}>{inc.incidentType}</Typography>
+                      <Typography variant='body2' sx={{ color: 'text.primary' }}>{inc.incidentType}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>{inc.reportedBy}</Typography>
@@ -244,7 +244,7 @@ export default function IncidentsPage() {
       {/* Modal Buat Laporan Insiden Baru */}
       <Dialog open={openCreate} onClose={() => setOpenCreate(false)} maxWidth='sm' fullWidth>
         <form onSubmit={handleCreateIncident}>
-          <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+          <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
             Input Laporan Insiden Pohon Baru
           </DialogTitle>
           <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -288,7 +288,7 @@ export default function IncidentsPage() {
             />
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setOpenCreate(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+            <Button onClick={() => setOpenCreate(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
               Batal
             </Button>
             <Button
@@ -305,7 +305,7 @@ export default function IncidentsPage() {
 
       {/* Modal Triage Insiden */}
       <Dialog open={Boolean(selectedIncident)} onClose={() => setSelectedIncident(null)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Keputusan Triage Insiden Pohon
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -315,18 +315,18 @@ export default function IncidentsPage() {
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#D94B4B' }}>
                   {selectedIncident.ticketCode} • Pohon {selectedIncident.treeId}
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Lokasi: {selectedIncident.area} • Pelapor: {selectedIncident.reportedBy}
                 </Typography>
               </Box>
-              <Typography variant='body2' sx={{ color: '#17251E' }}>
+              <Typography variant='body2' sx={{ color: 'text.primary' }}>
                 <strong>Temuan Masalah:</strong> {selectedIncident.incidentType}
               </Typography>
             </>
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button onClick={() => setSelectedIncident(null)} sx={{ textTransform: 'none', color: '#66756D' }}>
+          <Button onClick={() => setSelectedIncident(null)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
             Tutup
           </Button>
           <Button

@@ -136,7 +136,7 @@ export default function UsersPage() {
       case 'ADOPTER':
         return { bg: '#E7F3EC', color: '#21865B' }
       default:
-        return { bg: '#F0F0F0', color: '#66756D' }
+        return { bg: '#F0F0F0', color: 'text.secondary' }
     }
   }
 
@@ -144,10 +144,10 @@ export default function UsersPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Manajemen Pengguna & Organisasi
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D' }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
             Verifikasi akun pemilik kawasan (Area Owner), penugasan surveyor lapangan, dan pengelolaan hak akses (*RBAC*).
           </Typography>
         </Box>
@@ -178,7 +178,7 @@ export default function UsersPage() {
         />
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
-            <TableHead sx={{ bgcolor: '#F7F9F7' }}>
+            <TableHead sx={{ bgcolor: 'action.hover' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Nama Pengguna / Org</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Email Kontak</TableCell>
@@ -193,13 +193,13 @@ export default function UsersPage() {
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat akun pengguna dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat akun pengguna dari backend...</Typography>
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada data akun dari backend.</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Tidak ada data akun dari backend.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -208,7 +208,7 @@ export default function UsersPage() {
                   return (
                     <TableRow key={u.rawId} hover>
                       <TableCell>
-                        <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{u.name}</Typography>
+                        <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{u.name}</Typography>
                         <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>{u.id}</Typography>
                       </TableCell>
                       <TableCell><Typography variant='body2'>{u.email}</Typography></TableCell>
@@ -251,7 +251,7 @@ export default function UsersPage() {
       {/* Modal Undang Pengguna Baru */}
       <Dialog open={openInvite} onClose={() => setOpenInvite(false)} maxWidth='sm' fullWidth>
         <form onSubmit={handleInviteUser}>
-          <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+          <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
             Undang Pengguna Baru ke Platform
           </DialogTitle>
           <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -288,7 +288,7 @@ export default function UsersPage() {
             />
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setOpenInvite(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+            <Button onClick={() => setOpenInvite(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
               Batal
             </Button>
             <Button
@@ -305,31 +305,31 @@ export default function UsersPage() {
 
       {/* Modal Kelola Izin & Verifikasi */}
       <Dialog open={Boolean(selectedUser)} onClose={() => setSelectedUser(null)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Kelola Verifikasi & Hak Akses Akun
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {selectedUser && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '8px' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedUser.name}
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   Email: {selectedUser.email} • Role: {selectedUser.role}
                 </Typography>
               </Box>
-              <Typography variant='body2' sx={{ color: '#66756D' }}>
+              <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                 Organisasi Terdaftar: <strong>{selectedUser.organization}</strong>
               </Typography>
-              <Typography variant='body2' sx={{ color: '#66756D' }}>
+              <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                 Status Verifikasi Saat Ini: <strong>{selectedUser.verificationStatus}</strong>
               </Typography>
             </>
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button onClick={() => setSelectedUser(null)} sx={{ textTransform: 'none', color: '#66756D' }}>
+          <Button onClick={() => setSelectedUser(null)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
             Tutup
           </Button>
           <Button

@@ -125,10 +125,10 @@ export default function TreesPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
-          <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
+          <Typography variant='h5' sx={{ fontWeight: 700, color: 'text.primary' }}>
             Inventaris & Review Pohon Survei
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D' }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
             Validasi data hasil survei lapangan, evaluasi metrik DBH/kesehatan, dan penetapan kelayakan adopsi pohon.
           </Typography>
         </Box>
@@ -167,7 +167,7 @@ export default function TreesPage() {
         </Box>
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
           <Table sx={{ minWidth: 700 }}>
-            <TableHead sx={{ bgcolor: '#F7F9F7' }}>
+            <TableHead sx={{ bgcolor: 'action.hover' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Tag ID & Spesies</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Kawasan</TableCell>
@@ -183,23 +183,23 @@ export default function TreesPage() {
                 <TableRow>
                   <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data inventaris pohon...</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Memuat data inventaris pohon...</Typography>
                   </TableCell>
                 </TableRow>
               ) : filteredTrees.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Belum ada data pohon pada kategori ini.</Typography>
+                    <Typography variant='body2' sx={{ color: 'text.secondary' }}>Belum ada data pohon pada kategori ini.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredTrees.map(row => (
                   <TableRow key={row.id} hover>
                     <TableCell>
-                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>
                         {row.speciesLocal}
                       </Typography>
-                      <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D', display: 'block' }}>
+                      <Typography variant='caption' sx={{ fontStyle: 'italic', color: 'text.secondary', display: 'block' }}>
                         {row.speciesLatin}
                       </Typography>
                       <Typography variant='caption' sx={{ color: '#176B4D', fontWeight: 600 }}>
@@ -211,7 +211,7 @@ export default function TreesPage() {
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>DBH: {row.dbh}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>Tinggi: {row.height}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>Tinggi: {row.height}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2' sx={{ color: row.health.includes('Butuh') ? '#D99A25' : '#21865B', fontWeight: 500 }}>
@@ -220,7 +220,7 @@ export default function TreesPage() {
                     </TableCell>
                     <TableCell>
                       <Typography variant='body2'>{row.surveyor}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{row.date}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{row.date}</Typography>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-start' }}>
@@ -258,17 +258,17 @@ export default function TreesPage() {
 
       {/* Review Modal Dialog with Vertical Stepper & Activity Timeline (PRD Bagian 2.2) */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth='sm' fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
+        <DialogTitle sx={{ fontWeight: 700, color: 'text.primary' }}>
           Verifikasi Bertahap & Riwayat Siklus Hidup Pohon
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {selectedTree && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F4FAF6', borderRadius: '10px', border: '1px solid #C6E3D2' }}>
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: '10px', border: '1px solid #C6E3D2' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedTree.speciesLocal} ({selectedTree.speciesLatin})
                 </Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                   ID: {selectedTree.id} • Lokasi: {selectedTree.area}
                 </Typography>
               </Box>
@@ -314,8 +314,8 @@ export default function TreesPage() {
                       {i < 3 && <Box sx={{ width: 2, flex: 1, bgcolor: '#C6E3D2', my: 0.5 }} />}
                     </Box>
                     <Box>
-                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{st.step}</Typography>
-                      <Typography variant='caption' sx={{ color: '#66756D' }}>{st.desc}</Typography>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: 'text.primary' }}>{st.step}</Typography>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{st.desc}</Typography>
                     </Box>
                   </Box>
                 ))}
@@ -324,7 +324,7 @@ export default function TreesPage() {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button onClick={() => setOpenModal(false)} sx={{ textTransform: 'none', color: '#66756D' }}>
+          <Button onClick={() => setOpenModal(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>
             Tutup
           </Button>
           <Button

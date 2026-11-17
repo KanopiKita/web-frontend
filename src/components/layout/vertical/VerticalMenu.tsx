@@ -178,7 +178,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         </ScrollWrapper>
       </Box>
 
-      {/* Bottom User Profile & Quick Sign-Out Widget (Sesuai PRD Bagian 2.1) */}
+      {/* Bottom User Profile & Quick Sign-Out Widget */}
       {!hideFooterDetails && (
         <Box
           sx={{
@@ -186,8 +186,9 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
             mx: 2,
             mb: 2,
             borderRadius: '12px',
-            bgcolor: '#F4FAF6',
-            border: '1px solid #DFE7E0',
+            bgcolor: 'action.hover',
+            border: '1px solid',
+            borderColor: 'divider',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -202,7 +203,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
             <Box sx={{ minWidth: 0 }}>
               <Typography
                 variant='caption'
-                sx={{ fontWeight: 700, color: '#17251E', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                sx={{ fontWeight: 700, color: 'text.primary', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
                 {activeUser.name}
               </Typography>
