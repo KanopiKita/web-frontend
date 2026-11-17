@@ -65,7 +65,7 @@ export default function AccountSettingsPage() {
         ...(newPassword.trim().length >= 8 ? { password: newPassword.trim() } : {})
       })
       setNewPassword('')
-      setFeedback({ type: 'success', message: 'Profil akun Anda berhasil diperbarui di Backend!' })
+      setFeedback({ type: 'success', message: 'Profil akun Anda berhasil diperbarui!' })
       await fetchMyProfile()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal menyimpan perubahan profil.' })
@@ -109,10 +109,10 @@ export default function AccountSettingsPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
         <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-          Kelola Akun, Profil & Hak Akses (RBAC)
+          Kelola Akun, Profil & Hak Akses
         </Typography>
         <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-          Pengaturan identitas pengguna aktif (`/v1/me`), daftar kapabilitas keamanan JWT, dan pergantian sesi multi-peran.
+          Pengaturan informasi identitas pengguna, kata sandi, serta daftar hak akses peran Anda.
         </Typography>
       </Box>
 
@@ -216,7 +216,7 @@ export default function AccountSettingsPage() {
                 />
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Typography variant='caption' sx={{ color: '#66756D', mb: 1 }}>
-                    Klik salah satu akun hasil seed Backend di bawah untuk berpindah token JWT secara instan:
+                    Beralih peran untuk meninjau tampilan dashboard sesuai tingkat wewenang:
                   </Typography>
                   {DEMO_ACCOUNTS.map(acc => {
                     const isCurrent = profile?.email === acc.email

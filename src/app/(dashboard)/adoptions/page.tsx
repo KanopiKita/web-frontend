@@ -179,7 +179,7 @@ export default function AdoptionsPage() {
             Transaksi, Rekonsiliasi & Katalog Paket Adopsi
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Katalog paket adopsi live backend (`/v1/adoption-packages`), pemesanan pohon, rekonsiliasi payment gateway, dan sertifikat digital.
+            Pengelolaan katalog paket adopsi pohon, pemesanan kontribusi, rekonsiliasi pembayaran, dan penerbitan sertifikat digital.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
@@ -208,15 +208,15 @@ export default function AdoptionsPage() {
         </Alert>
       )}
 
-      {/* Packages Grid from Backend */}
+      {/* Packages Grid */}
       <Box>
         <Typography variant='h6' sx={{ fontWeight: 700, mb: 2, color: '#17251E' }}>
-          Paket Adopsi Aktif (Live Backend NestJS)
+          Katalog Paket Adopsi Pohon Resmi
         </Typography>
         {loading ? (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3 }}>
             <CircularProgress size={24} sx={{ color: '#176B4D' }} />
-            <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat paket adopsi dari backend...</Typography>
+            <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat katalog paket adopsi...</Typography>
           </Box>
         ) : (
           <Grid container spacing={4}>
@@ -250,7 +250,7 @@ export default function AdoptionsPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Riwayat Order Adopsi & Rekonsiliasi</Typography>
-              <Chip label={`${transactions.length} Transaksi Live BE`} size='small' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 700 }} />
+              <Chip label={`${transactions.length} Transaksi Tercatat`} size='small' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 700 }} />
             </Box>
           }
         />

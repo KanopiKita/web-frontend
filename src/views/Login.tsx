@@ -127,7 +127,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
               Platform Restorasi Kawasan & Validasi Karbon
             </Typography>
             <Typography variant='body2' sx={{ color: '#66756D', maxWidth: 440 }}>
-              Sistem backend geospasial terintegrasi untuk verifikasi tutupan pohon, validasi polygon hutan, dan penerbitan sertifikat digital.
+              Platform terpadu untuk pemantauan kawasan konservasi, verifikasi hasil survei lapangan, dan penerbitan sertifikat adopsi pohon.
             </Typography>
           </Box>
         </div>

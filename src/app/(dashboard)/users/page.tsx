@@ -98,7 +98,7 @@ export default function UsersPage() {
       setNewName('')
       setNewEmail('')
       setNewPhone('')
-      setFeedback({ type: 'success', message: `Pengguna baru (${newEmail}) berhasil ditambahkan ke Backend!` })
+      setFeedback({ type: 'success', message: `Pengguna baru (${newEmail}) berhasil ditambahkan!` })
       await fetchUsers()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal membuat pengguna baru.' })
@@ -148,7 +148,7 @@ export default function UsersPage() {
             Manajemen Pengguna & Organisasi
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Verifikasi akun pemilik kawasan (Area Owner), penugasan surveyor lapangan, dan pengelolaan hak akses (*RBAC*) terintegrasi Backend (`/v1/users`).
+            Verifikasi akun pemilik kawasan (Area Owner), penugasan surveyor lapangan, dan pengelolaan hak akses (*RBAC*).
           </Typography>
         </Box>
         <Button
@@ -172,7 +172,7 @@ export default function UsersPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Akun Pengguna Terdaftar</Typography>
-              <Chip label={`${users.length} Akun Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+              <Chip label={`${users.length} Akun Terdaftar`} size='small' color='success' sx={{ fontWeight: 600 }} />
             </Box>
           }
         />

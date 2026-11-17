@@ -78,7 +78,7 @@ export default function FormTemplatesPage() {
         }
       })
       setOpenCreate(false)
-      setFeedback({ type: 'success', message: `Template form "${taskType}" v${version} berhasil diterbitkan ke Backend!` })
+      setFeedback({ type: 'success', message: `Template form "${taskType}" v${version} berhasil diterbitkan!` })
       await fetchTemplates()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal membuat versi template baru.' })
@@ -92,10 +92,10 @@ export default function FormTemplatesPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-            Master Template Form Survei Mobile (Offline Sync Schema)
+            Master Template Form Survei Lapangan
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Konfigurasi skema input dinamis dan aturan bukti foto ber-GPS yang diunduh aplikasi mobile surveyor (`/v1/admin/form-templates`).
+            Konfigurasi variabel input dinamis dan aturan kelengkapan foto bukti untuk kegiatan survei lapangan.
           </Typography>
         </Box>
         <Button

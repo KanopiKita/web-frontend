@@ -102,7 +102,7 @@ export default function IncidentsPage() {
       })
       setOpenCreate(false)
       setDescription('')
-      setFeedback({ type: 'success', message: 'Laporan insiden pohon berhasil disimpan ke database Backend!' })
+      setFeedback({ type: 'success', message: 'Laporan insiden pohon berhasil disimpan!' })
       await fetchIncidentsData()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal melaporkan insiden.' })
@@ -130,7 +130,7 @@ export default function IncidentsPage() {
             Triage Insiden & Penggantian Pohon
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Penanganan laporan pohon sakit/tumbang (`/v1/admin/incidents`), penugasan inspeksi surveyor, dan pergantian pohon.
+            Penanganan laporan pohon sakit/tumbang, penugasan inspeksi surveyor, dan alokasi pergantian pohon.
           </Typography>
         </Box>
         <Button
@@ -155,7 +155,7 @@ export default function IncidentsPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Tiket Insiden Aktif</Typography>
-              <Chip label={`${incidents.length} Tiket Live BE`} size='small' color='error' sx={{ fontWeight: 600 }} />
+              <Chip label={`${incidents.length} Tiket Aktif`} size='small' color='error' sx={{ fontWeight: 600 }} />
             </Box>
           }
         />
@@ -297,7 +297,7 @@ export default function IncidentsPage() {
               disabled={submitting || description.trim().length < 5}
               sx={{ bgcolor: '#D94B4B', color: '#ffffff', textTransform: 'none', fontWeight: 600, '&:hover': { bgcolor: '#B83838' } }}
             >
-              {submitting ? 'Mengirim ke BE...' : 'Kirim Laporan Insiden'}
+              {submitting ? 'Mengirim...' : 'Kirim Laporan Insiden'}
             </Button>
           </DialogActions>
         </form>

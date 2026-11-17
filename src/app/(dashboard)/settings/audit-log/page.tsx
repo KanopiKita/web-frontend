@@ -97,7 +97,7 @@ export default function AuditLogPage() {
             actor: 'Super Admin Kanopi',
             role: 'SUPERADMIN',
             module: 'SPATIAL_GIS',
-            action: 'Validasi SK Menteri & Publikasi MultiPolygon PostGIS (SRID 4326)',
+            action: 'Validasi SK Menteri & Publikasi Batas Wilayah Kawasan',
             target: areas[0].name,
             status: 'SUCCESS'
           })
@@ -148,10 +148,10 @@ export default function AuditLogPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 320px' }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-            Audit Log & Vertical Activity Timeline Sistem
+            Log Audit & Riwayat Aktivitas Operasional
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Rekam jejak mutasi data lintas peran, sinkronisasi survei mobile, publikasi kawasan PostGIS, dan transaksi adopsi (PRD Bagian 2.2 & 4).
+            Rekam jejak aktivitas pengguna, pengiriman survei lapangan, publikasi kawasan, dan transaksi adopsi pohon.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>

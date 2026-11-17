@@ -117,7 +117,7 @@ export default function CalendarPage() {
         due_at: isoDate
       })
       setOpenModal(false)
-      setFeedback({ type: 'success', message: 'Jadwal penugasan surveyor baru berhasil dibuat di Backend!' })
+      setFeedback({ type: 'success', message: 'Jadwal penugasan surveyor baru berhasil dibuat!' })
       await fetchAssignmentsData()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal membuat penugasan baru.' })
@@ -145,10 +145,10 @@ export default function CalendarPage() {
             <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
               Jadwal Penugasan & Monitoring Berkala
             </Typography>
-            <Chip label={`${scheduleItems.length} Penugasan Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+            <Chip label={`${scheduleItems.length} Penugasan Aktif`} size='small' color='success' sx={{ fontWeight: 600 }} />
           </Box>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Pengaturan jadwal pemantauan pohon teradopsi dan penugasan surveyor lapangan (`/v1/admin/assignments`).
+            Pengaturan jadwal pemantauan pohon teradopsi dan penugasan surveyor lapangan.
           </Typography>
         </Box>
         <Button

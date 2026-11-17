@@ -30,7 +30,7 @@ const KanopiWebGisMap = dynamic(() => import('@/components/map/KanopiWebGisMap')
     <Box sx={{ height: 420, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#EAF0EC' }}>
       <CircularProgress size={32} sx={{ color: '#176B4D', mr: 2 }} />
       <Typography variant='body2' sx={{ color: '#176B4D', fontWeight: 600 }}>
-        Memuat Engine WebGL Mapbox...
+        Memuat Peta Interaktif Kawasan...
       </Typography>
     </Box>
   )
@@ -142,7 +142,7 @@ export default function AreasPage() {
       setOpenCreate(false)
       setNewName('')
       setNewDesc('')
-      setFeedback({ type: 'success', message: `Kawasan "${newName}" beserta polygon PostGIS berhasil disimpan ke Backend!` })
+      setFeedback({ type: 'success', message: `Kawasan "${newName}" beserta batas wilayah berhasil disimpan!` })
       await fetchSpatialData()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal mengajukan kawasan baru.' })
@@ -171,10 +171,10 @@ export default function AreasPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-            Kawasan Konservasi & Batas WebGIS (Mapbox GL)
+            Kawasan Konservasi & Peta WebGIS
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Visualisasi interaktif batas wilayah spasial (MultiPolygon PostGIS), titik GPS pohon, dan manajemen publikasi kawasan.
+            Visualisasi interaktif batas wilayah konservasi, sebaran koordinat pohon, dan pengelolaan status publikasi kawasan.
           </Typography>
         </Box>
         <Button
@@ -204,7 +204,7 @@ export default function AreasPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Kawasan Konservasi Terdaftar</Typography>
-              <Chip label={`${areas.length} Kawasan Live PostGIS`} size='small' color='success' sx={{ fontWeight: 600 }} />
+              <Chip label={`${areas.length} Kawasan Terdaftar`} size='small' color='success' sx={{ fontWeight: 600 }} />
             </Box>
           }
         />
@@ -225,13 +225,13 @@ export default function AreasPage() {
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data spasial kawasan dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data kawasan konservasi...</Typography>
                   </TableCell>
                 </TableRow>
               ) : areas.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada data kawasan dari backend.</Typography>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Belum ada kawasan konservasi terdaftar.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -320,10 +320,10 @@ export default function AreasPage() {
             />
             <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
               <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D', display: 'block' }}>
-                Polygon Spasial PostGIS (SRID 4326)
+                Koordinat Batas Wilayah (Polygon Geospasial)
               </Typography>
               <Typography variant='caption' sx={{ color: '#66756D' }}>
-                Polygon batas wilayah otomatis divalidasi oleh PostGIS (<code>ST_IsValid</code> & <code>ST_Multi</code>) di sekitar pesisir Bekasi.
+                Batas wilayah kawasan otomatis divalidasi untuk memastikan akurasi luasan di lapangan.
               </Typography>
             </Box>
           </DialogContent>
@@ -337,7 +337,7 @@ export default function AreasPage() {
               disabled={submitting || !newName.trim()}
               sx={{ bgcolor: '#176B4D', color: '#ffffff', textTransform: 'none', fontWeight: 600, '&:hover': { bgcolor: '#104D39' } }}
             >
-              {submitting ? 'Menyimpan ke PostGIS...' : 'Simpan Kawasan'}
+              {submitting ? 'Menyimpan...' : 'Simpan Kawasan'}
             </Button>
           </DialogActions>
         </form>
@@ -346,7 +346,7 @@ export default function AreasPage() {
       {/* Modal Detail Polygon GeoJSON */}
       <Dialog open={Boolean(detailArea)} onClose={() => setDetailArea(null)} maxWidth='sm' fullWidth>
         <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
-          Detail Spasial GeoJSON Kawasan
+          Detail Batas Wilayah Kawasan
         </DialogTitle>
         <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {detailArea && (
@@ -360,7 +360,7 @@ export default function AreasPage() {
                 </Typography>
               </Box>
               <Typography variant='caption' sx={{ fontWeight: 700, color: '#66756D' }}>
-                Data MultiPolygon GeoJSON (PostGIS ST_AsGeoJSON):
+                Koordinat Batas Polygon (GeoJSON):
               </Typography>
               <Box
                 component='pre'

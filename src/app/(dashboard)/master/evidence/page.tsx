@@ -132,10 +132,10 @@ export default function EvidenceCenterPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
         <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-          Pusat Dokumen Legalitas & Bukti Lapangan (EXIF GPS)
+          Pusat Dokumen Legalitas & Bukti Lapangan
         </Typography>
         <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-          Pengarsipan dokumen SK hak kelola kawasan serta validasi metadata EXIF GPS & SHA-256 foto bukti survei lapangan (PRD Modul 4).
+          Pengarsipan dokumen SK hak kelola kawasan serta dokumentasi foto bukti survei lapangan ber-geotag GPS.
         </Typography>
       </Box>
 

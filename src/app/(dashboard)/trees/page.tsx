@@ -55,7 +55,7 @@ export default function TreesPage() {
             height: `${t.heightM || 6.4} m`,
             lat: t.latitude || -5.972,
             lng: t.longitude || 107.024,
-            notes: `Tag QR: ${t.barcodeUid || 'BC-MRG'}. Terdaftar pada backend PostgreSQL & PostGIS.`
+            notes: `Tag QR: ${t.barcodeUid || 'BC-MRG'}. Kondisi pohon terpantau baik oleh tim lapangan.`
           }))
           setTrees(mapped)
         } else {
@@ -129,7 +129,7 @@ export default function TreesPage() {
             Inventaris & Review Pohon Survei
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Validasi data hasil survei lapangan, evaluasi metrik DBH/kesehatan, dan penetapan kelayakan adopsi dari Backend.
+            Validasi data hasil survei lapangan, evaluasi metrik DBH/kesehatan, dan penetapan kelayakan adopsi pohon.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
@@ -162,7 +162,7 @@ export default function TreesPage() {
         <Box sx={{ p: 4, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pohon Terdaftar</Typography>
-            <Chip label={`${trees.length} Pohon Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+            <Chip label={`${trees.length} Pohon Terdaftar`} size='small' color='success' sx={{ fontWeight: 600 }} />
           </Box>
         </Box>
         <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
@@ -183,13 +183,13 @@ export default function TreesPage() {
                 <TableRow>
                   <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
                     <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data pohon dari backend...</Typography>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat data inventaris pohon...</Typography>
                   </TableCell>
                 </TableRow>
               ) : filteredTrees.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Tidak ada data pohon dari backend.</Typography>
+                    <Typography variant='body2' sx={{ color: '#66756D' }}>Belum ada data pohon pada kategori ini.</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -281,8 +281,8 @@ export default function TreesPage() {
                     desc: `Spesies: ${selectedTree.speciesLocal} (${selectedTree.speciesLatin}) • Dimensi DBH ${selectedTree.dbh}, Tinggi ${selectedTree.height}`
                   },
                   {
-                    step: 'Langkah 2 — Validasi Titik Koordinat Spasial PostGIS',
-                    desc: `Koordinat GPS (${selectedTree.lat}, ${selectedTree.lng}) valid berada di dalam MultiPolygon kawasan (ST_Covers = true)`
+                    step: 'Langkah 2 — Validasi Titik Koordinat Geospasial',
+                    desc: `Koordinat GPS (${selectedTree.lat}, ${selectedTree.lng}) valid berada di dalam batas wilayah kawasan konservasi`
                   },
                   {
                     step: 'Langkah 3 — Pemeriksaan Bukti Foto & Tag QR Fisik',

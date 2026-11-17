@@ -99,7 +99,7 @@ export default function CarbonCertificatesPage() {
             Sertifikat Adopsi Digital & Metodologi Karbon
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Pengelolaan sertifikat terverifikasi kriptografis (`/v1/certificates/verify/:token`), pratinjau cetak PDF, dan kalkulasi biomassa karbon.
+            Verifikasi keaslian sertifikat adopsi pohon, pratinjau cetak sertifikat PDF, dan kalkulasi serapan biomassa karbon.
           </Typography>
         </Box>
       </Box>
@@ -111,11 +111,11 @@ export default function CarbonCertificatesPage() {
             <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Metodologi Allometrik Biomassa Aktif</Typography>} />
             <CardContent>
               <Typography variant='body2' sx={{ color: '#66756D', mb: 2 }}>
-                Kalkulasi serapan karbon menggunakan persamaan allometrik spesifik ekosistem Mangrove & Tropis Lembap berdasarkan variabel DBH (Diameter at Breast Height) dan berat jenis kayu spesies di database Backend.
+                Kalkulasi serapan karbon menggunakan persamaan allometrik spesifik ekosistem Mangrove & Hutan Tropis Lembap berdasarkan variabel DBH (Diameter at Breast Height) dan berat jenis kayu spesies.
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
                 <Chip label='Formula: Chave et al. (Tropical Moist & Mangrove)' sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 600 }} />
-                <Chip label='SHA-256 Token Verification Active' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 600 }} />
+                <Chip label='Verifikasi Sertifikat Digital Aktif' sx={{ bgcolor: '#E8F2FA', color: '#3478C0', fontWeight: 600 }} />
               </Box>
             </CardContent>
           </Card>
@@ -123,7 +123,7 @@ export default function CarbonCertificatesPage() {
 
         <Grid size={{ xs: 12, md: 6 }}>
           <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', height: '100%' }}>
-            <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Cek Keaslian Sertifikat (Live Backend API)</Typography>} />
+            <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Verifikasi Keaslian Nomor Sertifikat</Typography>} />
             <CardContent>
               <form onSubmit={handleVerifyToken} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
                 <TextField
@@ -166,7 +166,7 @@ export default function CarbonCertificatesPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Sertifikat Diterbitkan</Typography>
-              <Chip label={`${certs.length} Sertifikat Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+              <Chip label={`${certs.length} Sertifikat Terbit`} size='small' color='success' sx={{ fontWeight: 600 }} />
             </Box>
           }
         />
@@ -264,7 +264,7 @@ export default function CarbonCertificatesPage() {
                 {previewCert.recipient}
               </Typography>
               <Typography variant='body2' sx={{ color: '#485B50', maxWidth: 580, mx: 'auto', mb: 3 }}>
-                Atas kontribusi nyata dalam pemeliharaan ekosistem hutan dan adopsi pohon terdaftar yang dipantau secara berkala melalui sistem geospasial PostGIS Kanopi Kita.
+                Atas kontribusi nyata dalam pemeliharaan ekosistem hutan dan adopsi pohon terdaftar yang dipantau secara berkala melalui sistem pemantauan geospasial Kanopi Kita.
               </Typography>
 
               <Divider sx={{ my: 3 }} />
@@ -316,10 +316,10 @@ export default function CarbonCertificatesPage() {
                   <i className='ri-qr-code-line' style={{ fontSize: '2.4rem', color: '#176B4D' }} />
                   <Box sx={{ textAlign: 'left' }}>
                     <Typography variant='caption' sx={{ fontWeight: 800, color: '#17251E', display: 'block' }}>
-                      SCAN VERIFIKASI
+                      SCAN VERIFIKASI RESMI
                     </Typography>
                     <Typography variant='caption' sx={{ color: '#176B4D', fontFamily: 'monospace', fontSize: '0.68rem' }}>
-                      /v1/certificates/verify/{previewCert.id}
+                      ID: {previewCert.id}
                     </Typography>
                   </Box>
                 </Box>

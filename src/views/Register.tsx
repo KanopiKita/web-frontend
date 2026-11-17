@@ -123,7 +123,7 @@ const Register = ({ mode }: { mode: Mode }) => {
               Daftarkan Kawasan & Akun Konservasi Anda
             </Typography>
             <Typography variant='body2' sx={{ color: '#66756D', maxWidth: 440 }}>
-              Terhubung langsung dengan ekosistem database spasial PostGIS Kanopi Kita untuk transparansi data adopsi dan verifikasi pohon.
+              Bergabung dalam ekosistem konservasi digital Kanopi Kita untuk transparansi data adopsi, pemantauan kawasan, dan verifikasi pohon.
             </Typography>
           </Box>
         </div>
@@ -148,7 +148,7 @@ const Register = ({ mode }: { mode: Mode }) => {
 
           {successMsg && (
             <Alert severity='success' sx={{ bgcolor: '#E7F3EC', color: '#176B4D', fontWeight: 600 }}>
-              Pendaftaran berhasil disimpan ke Backend! Mengalihkan Anda ke halaman login...
+              Pendaftaran berhasil! Mengalihkan Anda ke halaman login...
             </Alert>
           )}
 

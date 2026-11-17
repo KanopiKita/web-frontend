@@ -93,10 +93,10 @@ export default function SystemSettingsPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%' }}>
       <Box>
         <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-          Kredensial Mapbox, Integrasi Backend & Sistem
+          Pengaturan Peta, Pembayaran & Sistem
         </Typography>
         <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-          Pusat konfigurasi token geospasial Mapbox GL JS, pemantauan kesehatan API NestJS + PostGIS, dan simulator webhook payment gateway.
+          Konfigurasi kredensial peta interaktif Mapbox, pemantauan status layanan sistem, dan pengujian konfirmasi pembayaran.
         </Typography>
       </Box>
 
@@ -180,48 +180,48 @@ export default function SystemSettingsPage() {
             <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0' }}>
               <CardHeader
                 title={
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant='h6' sx={{ fontWeight: 700 }}>Status Koneksi Backend & PostGIS</Typography>
-                    <Chip
-                      label={apiOnline ? `ONLINE (${pingMs ?? 12} ms)` : 'OFFLINE'}
-                      size='small'
-                      color={apiOnline ? 'success' : 'error'}
-                      sx={{ fontWeight: 700 }}
-                    />
-                  </Box>
-                }
-              />
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ p: 2, bgcolor: '#F6FAF7', borderRadius: '10px', border: '1px solid #DFE7E0' }}>
-                  <Typography variant='caption' sx={{ color: '#66756D', display: 'block' }}>Base URL Endpoint API:</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D', fontFamily: 'monospace' }}>
-                    {getApiBaseUrl()}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>
-                    Engine Spasial: <strong>PostgreSQL 15 + PostGIS 3 (SRID 4326)</strong>
-                  </Typography>
-                  <Button
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant='h6' sx={{ fontWeight: 700 }}>Status Layanan & Server</Typography>
+                  <Chip
+                    label={apiOnline ? `AKTIF (${pingMs ?? 12} ms)` : 'TIDAK TERHUBUNG'}
                     size='small'
-                    variant='outlined'
-                    disabled={checkingPing}
-                    onClick={runHealthCheck}
-                    sx={{ borderColor: '#176B4D', color: '#176B4D', fontWeight: 600 }}
-                  >
-                    {checkingPing ? 'Pinging...' : 'Test Ping API'}
-                  </Button>
+                    color={apiOnline ? 'success' : 'error'}
+                    sx={{ fontWeight: 700 }}
+                  />
                 </Box>
-              </CardContent>
-            </Card>
-
-            {/* Payment Webhook Simulator */}
-            <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0' }}>
-              <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Simulator Webhook Payment Gateway</Typography>} />
-              <CardContent>
-                <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mb: 2 }}>
-                  Uji coba callback pelunasan order adopsi (<code>POST /v1/webhooks/payments/:provider</code>) untuk menerbitkan sertifikat otomatis:
+              }
+            />
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ p: 2, bgcolor: '#F6FAF7', borderRadius: '10px', border: '1px solid #DFE7E0' }}>
+                <Typography variant='caption' sx={{ color: '#66756D', display: 'block' }}>Tautan Layanan Data:</Typography>
+                <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D', fontFamily: 'monospace' }}>
+                  {getApiBaseUrl()}
                 </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant='caption' sx={{ color: '#66756D' }}>
+                  Layanan Pemetaan & Basis Data: <strong>Aktif & Terhubung</strong>
+                </Typography>
+                <Button
+                  size='small'
+                  variant='outlined'
+                  disabled={checkingPing}
+                  onClick={runHealthCheck}
+                  sx={{ borderColor: '#176B4D', color: '#176B4D', fontWeight: 600 }}
+                >
+                  {checkingPing ? 'Memeriksa...' : 'Cek Koneksi'}
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Payment Webhook Simulator */}
+          <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0' }}>
+            <CardHeader title={<Typography variant='h6' sx={{ fontWeight: 700 }}>Konfirmasi Manual / Simulasi Pembayaran</Typography>} />
+            <CardContent>
+              <Typography variant='caption' sx={{ color: '#66756D', display: 'block', mb: 2 }}>
+                Konfirmasi pelunasan transaksi adopsi pohon untuk menerbitkan sertifikat secara otomatis:
+              </Typography>
                 <form onSubmit={handleSimulateWebhook} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <TextField
                     select

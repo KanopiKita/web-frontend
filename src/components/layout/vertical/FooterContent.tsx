@@ -27,9 +27,9 @@ const FooterContent = () => {
       </p>
       {!isBreakpointReached && (
         <div className='flex items-center gap-4 text-sm text-textSecondary'>
-          <span>PRD v2.0 Baseline</span>
+          <span>Ekosistem Konservasi Terverifikasi</span>
           <span>•</span>
-          <span>Admin & Area Owner Backoffice</span>
+          <span>Portal Pengelola & Administrator</span>
         </div>
       )}
     </div>

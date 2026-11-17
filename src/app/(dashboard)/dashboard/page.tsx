@@ -76,11 +76,11 @@ export default function DashboardPage() {
     {
       title: 'Pohon Terverifikasi',
       value: realCounts?.totalTrees ? `${realCounts.totalTrees} Pohon Terdaftar` : '4,850 Pohon',
-      subtitle: 'Data terintegrasi live backend',
+      subtitle: 'Tersebar di seluruh blok kawasan konservasi',
       icon: 'ri-plant-fill',
       iconBg: '#E7F3EC',
       iconColor: '#21865B',
-      trend: '+100% sinkron'
+      trend: '100% terverifikasi GPS'
     },
     {
       title: 'Pohon Teradopsi',

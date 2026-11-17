@@ -95,7 +95,7 @@ export default function MasterSpeciesPage() {
       setScientificName('')
       setFeedback({
         type: 'success',
-        message: `Spesies "${localName} (${scientificName})" berhasil ditambahkan ke Master Data Backend!`
+        message: `Spesies "${localName} (${scientificName})" berhasil ditambahkan ke Katalog Master Spesies!`
       })
       await fetchSpecies()
     } catch (err: any) {
@@ -121,7 +121,7 @@ export default function MasterSpeciesPage() {
             Master Data Spesies Pohon & Taksonomi
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Referensi spesies pohon untuk aplikasi mobile surveyor & katalog adopsi (`/v1/species` & `POST /v1/admin/species`).
+            Referensi taksonomi spesies pohon untuk kegiatan survei lapangan dan katalog adopsi.
           </Typography>
         </Box>
         <Button
@@ -150,7 +150,7 @@ export default function MasterSpeciesPage() {
               </Box>
               <Box>
                 <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>{speciesList.length} Spesies</Typography>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Total Taksonomi Terdaftar di BE</Typography>
+                <Typography variant='caption' sx={{ color: '#66756D' }}>Total Taksonomi Terdaftar</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -192,7 +192,7 @@ export default function MasterSpeciesPage() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Typography variant='h6' sx={{ fontWeight: 700 }}>Katalog Master Spesies</Typography>
-                <Chip label={`${filtered.length} Spesies Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+                <Chip label={`${filtered.length} Spesies Terdaftar`} size='small' color='success' sx={{ fontWeight: 600 }} />
               </Box>
               <TextField
                 size='small'
@@ -313,7 +313,7 @@ export default function MasterSpeciesPage() {
               disabled={submitting}
               sx={{ bgcolor: '#176B4D', color: '#ffffff', fontWeight: 600 }}
             >
-              {submitting ? 'Menyimpan...' : 'Simpan Spesies ke BE'}
+              {submitting ? 'Menyimpan...' : 'Simpan Spesies'}
             </Button>
           </DialogActions>
         </form>

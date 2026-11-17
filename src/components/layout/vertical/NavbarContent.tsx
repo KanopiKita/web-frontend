@@ -169,7 +169,7 @@ const NavbarContent = () => {
       {/* Right: Status Pill, Map Credentials Shortcut, Notifications, Mode, User Profile */}
       <div className='flex items-center gap-2'>
         <Chip
-          label='API & PostGIS Live'
+          label='Sistem Operasional Aktif'
           size='small'
           onClick={() => router.push('/settings/system')}
           icon={
@@ -313,7 +313,7 @@ const NavbarContent = () => {
           {filteredTrees.length > 0 && (
             <Box sx={{ p: 2, borderBottom: '1px solid #EDF2EE' }}>
               <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D', px: 1, display: 'block', mb: 1 }}>
-                POHON TERDAFTAR DI BACKEND ({filteredTrees.length})
+                INVENTARIS POHON TERDAFTAR ({filteredTrees.length})
               </Typography>
               {filteredTrees.map(t => (
                 <Box

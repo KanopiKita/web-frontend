@@ -129,7 +129,7 @@ export default function SurveysPage() {
             Review Survei Lapangan & Board Kanban Operasional
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Board 4 kolom status antrean review survei, verifikasi lapangan, pohon siap adopsi, dan triage insiden (PRD Bagian 5 Modul 2).
+            Manajemen antrean review hasil survei lapangan, verifikasi ulang, kelayakan adopsi, dan penanganan insiden pohon.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
@@ -357,7 +357,7 @@ export default function SurveysPage() {
             title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pengiriman Batch Survei</Typography>
-                <Chip label={`${surveys.length} Submission Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+                <Chip label={`${surveys.length} Batch Survei`} size='small' color='success' sx={{ fontWeight: 600 }} />
               </Box>
             }
           />

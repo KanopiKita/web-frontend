@@ -73,7 +73,7 @@ export default function MasterOrganizationsPage() {
       setEmail('')
       setPhone('')
       setWebsite('')
-      setFeedback({ type: 'success', message: `Organisasi "${name}" berhasil didaftarkan ke Backend!` })
+      setFeedback({ type: 'success', message: `Organisasi "${name}" berhasil didaftarkan!` })
       await fetchOrgs()
     } catch (err: any) {
       setFeedback({ type: 'error', message: err?.message || 'Gagal menambahkan organisasi.' })
@@ -100,7 +100,7 @@ export default function MasterOrganizationsPage() {
             Master Organisasi & Lembaga Pengelola Kawasan
           </Typography>
           <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
-            Manajemen yayasan konservasi, LPHA hutan adat, instansi pemerintah, dan mitra CSR korporasi (`/v1/organizations`).
+            Manajemen yayasan konservasi, LPHA hutan adat, instansi pemerintah, dan mitra CSR korporasi.
           </Typography>
         </Box>
         <Button
@@ -124,7 +124,7 @@ export default function MasterOrganizationsPage() {
           title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Organisasi Terdaftar</Typography>
-              <Chip label={`${orgs.length} Organisasi Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+              <Chip label={`${orgs.length} Organisasi Terdaftar`} size='small' color='success' sx={{ fontWeight: 600 }} />
             </Box>
           }
         />
