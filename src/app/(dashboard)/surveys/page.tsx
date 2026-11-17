@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
+import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
@@ -13,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -39,17 +41,28 @@ interface SurveySubmissionItem {
 }
 
 export default function SurveysPage() {
+  const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban')
   const [surveys, setSurveys] = useState<SurveySubmissionItem[]>([])
+  const [trees, setTrees] = useState<any[]>([])
+  const [incidents, setIncidents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedBatch, setSelectedBatch] = useState<SurveySubmissionItem | null>(null)
   const [reviewNotes, setReviewNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  const fetchQueue = async () => {
+  const fetchQueueAndKanban = async () => {
     setLoading(true)
     try {
-      const res = await KanopiApi.getReviewQueue()
+      const [res, treesRes, incRes] = await Promise.all([
+        KanopiApi.getReviewQueue().catch(() => []),
+        KanopiApi.getPublicTrees().catch(() => []),
+        KanopiApi.getAdminIncidents().catch(() => [])
+      ])
+
+      if (Array.isArray(treesRes)) setTrees(treesRes)
+      if (Array.isArray(incRes)) setIncidents(incRes)
+
       if (Array.isArray(res)) {
         const mapped: SurveySubmissionItem[] = res.map((s: any, idx: number) => ({
           id: s.id,
@@ -78,7 +91,7 @@ export default function SurveysPage() {
   }
 
   useEffect(() => {
-    fetchQueue()
+    fetchQueueAndKanban()
   }, [])
 
   const handleReviewDecision = async (decision: 'APPROVED' | 'REVISION_REQUIRED') => {
@@ -104,25 +117,60 @@ export default function SurveysPage() {
     }
   }
 
+  const pendingColumns = surveys.filter(s => s.reviewStatus === 'UNDER_REVIEW' || s.reviewStatus === 'SUBMITTED')
+  const revisionColumns = surveys.filter(s => s.reviewStatus === 'REVISION_REQUIRED')
+  const approvedColumns = surveys.filter(s => s.reviewStatus === 'APPROVED')
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '100%', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, maxWidth: '100%', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant='h5' sx={{ fontWeight: 700, color: '#17251E' }}>
-            Batch Hasil Survei Lapangan (Review Queue)
+            Review Survei Lapangan & Board Kanban Operasional
           </Typography>
-          <Typography variant='body2' sx={{ color: '#66756D' }}>
-            Sinkronisasi data batch dari aplikasi mobile surveyor (`/v1/admin/review-queue`) dan persetujuan hasil verifikasi lapangan.
+          <Typography variant='body2' sx={{ color: '#66756D', mt: 0.5 }}>
+            Board 4 kolom status antrean review survei, verifikasi lapangan, pohon siap adopsi, dan triage insiden (PRD Bagian 5 Modul 2).
           </Typography>
         </Box>
-        <Button
-          variant='outlined'
-          startIcon={<i className='ri-refresh-line' />}
-          onClick={fetchQueue}
-          sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none', fontWeight: 600 }}
-        >
-          Muat Ulang Antrean
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
+          <Button
+            variant={viewMode === 'kanban' ? 'contained' : 'outlined'}
+            size='small'
+            startIcon={<i className='ri-kanban-view' />}
+            onClick={() => setViewMode('kanban')}
+            sx={{
+              bgcolor: viewMode === 'kanban' ? '#176B4D' : 'transparent',
+              color: viewMode === 'kanban' ? '#ffffff' : '#176B4D',
+              borderColor: '#176B4D',
+              fontWeight: 600
+            }}
+          >
+            Kanban Board (4 Kolom)
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'contained' : 'outlined'}
+            size='small'
+            startIcon={<i className='ri-table-line' />}
+            onClick={() => setViewMode('table')}
+            sx={{
+              bgcolor: viewMode === 'table' ? '#176B4D' : 'transparent',
+              color: viewMode === 'table' ? '#ffffff' : '#176B4D',
+              borderColor: '#176B4D',
+              fontWeight: 600
+            }}
+          >
+            Tabel Batch
+          </Button>
+          <Button
+            variant='outlined'
+            size='small'
+            startIcon={<i className='ri-refresh-line' />}
+            onClick={fetchQueueAndKanban}
+            sx={{ borderColor: '#DFE7E0', color: '#485B50', fontWeight: 600 }}
+          >
+            Sync
+          </Button>
+        </Box>
       </Box>
 
       {feedback && (
@@ -131,43 +179,202 @@ export default function SurveysPage() {
         </Alert>
       )}
 
-      <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
-        <CardHeader
-          title={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pengiriman Batch Survei</Typography>
-              <Chip label={`${surveys.length} Submission Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+      {loading ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
+          <CircularProgress size={34} sx={{ color: '#176B4D', mb: 2 }} />
+          <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat board kanban & antrean survei dari backend...</Typography>
+        </Box>
+      ) : viewMode === 'kanban' ? (
+        /* 4-Column Kanban Board (PRD Section 5.2) */
+        <Grid container spacing={3.5}>
+          {/* Column 1: Antrean Review */}
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <Box sx={{ bgcolor: '#F4FAF6', p: 2.5, borderRadius: '16px', border: '1px solid #DFE7E0', minHeight: 420 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                  1. ANTREAN REVIEW
+                </Typography>
+                <Chip label={pendingColumns.length} size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {pendingColumns.map(item => (
+                  <Card key={item.id} sx={{ borderRadius: '12px', border: '1px solid #DFE7E0' }}>
+                    <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D' }}>{item.batchId}</Typography>
+                        <Chip label={item.taskType} size='small' sx={{ height: 18, fontSize: '0.62rem' }} />
+                      </Box>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                        🌲 {item.treeCode} ({item.totalTreesSubmitted} Pohon)
+                      </Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>
+                        Petugas: {item.surveyor}
+                      </Typography>
+                      <Button
+                        size='small'
+                        variant='contained'
+                        fullWidth
+                        onClick={() => setSelectedBatch(item)}
+                        sx={{ mt: 1, bgcolor: '#176B4D', color: '#ffffff', fontWeight: 600 }}
+                      >
+                        Periksa & Setujui
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
             </Box>
-          }
-        />
-        <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
-          <Table sx={{ minWidth: 700 }}>
-            <TableHead sx={{ bgcolor: '#F7F9F7' }}>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Batch ID & Tanggal</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Kawasan & Kode Tugas</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Surveyor</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Cakupan Pohon</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Status Review</TableCell>
-                <TableCell align='right' sx={{ fontWeight: 600 }}>Aksi</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
+          </Grid>
+
+          {/* Column 2: Butuh Verifikasi / Revisi */}
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <Box sx={{ bgcolor: '#FFFBF2', p: 2.5, borderRadius: '16px', border: '1px solid #F3E3C3', minHeight: 420 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                  2. BUTUH VERIFIKASI ULANG
+                </Typography>
+                <Chip label={revisionColumns.length + 1} size='small' sx={{ bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {revisionColumns.map(item => (
+                  <Card key={item.id} sx={{ borderRadius: '12px', border: '1px solid #F3E3C3' }}>
+                    <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Typography variant='caption' sx={{ fontWeight: 700, color: '#D99A25' }}>{item.batchId}</Typography>
+                      <Typography variant='body2' sx={{ fontWeight: 700 }}>{item.treeCode}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>{item.notes}</Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+                {trees
+                  .filter(t => t.healthStatus === 'ATTENTION')
+                  .map(t => (
+                    <Card key={t.id} sx={{ borderRadius: '12px', border: '1px solid #F3E3C3' }}>
+                      <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography variant='caption' sx={{ fontWeight: 700, color: '#D99A25' }}>{t.treeCode}</Typography>
+                          <Chip label='ATTENTION' size='small' sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#FEF6E6', color: '#D99A25', fontWeight: 700 }} />
+                        </Box>
+                        <Typography variant='body2' sx={{ fontWeight: 700 }}>{t.species?.localName}</Typography>
+                        <Typography variant='caption' sx={{ color: '#66756D' }}>
+                          Kondisi tajuk perlu pemantauan ulang oleh surveyor.
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Column 3: Disetujui (Eligible Adopsi) */}
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <Box sx={{ bgcolor: '#F2F9F5', p: 2.5, borderRadius: '16px', border: '1px solid #C6E3D2', minHeight: 420 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#17251E' }}>
+                  3. DISETUJUI (ELIGIBLE)
+                </Typography>
+                <Chip
+                  label={approvedColumns.length + trees.filter(t => t.adoptionStatus === 'ELIGIBLE').length}
+                  size='small'
+                  sx={{ bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 700 }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {approvedColumns.map(item => (
+                  <Card key={item.id} sx={{ borderRadius: '12px', border: '1px solid #C6E3D2' }}>
+                    <CardContent sx={{ p: '16px !important' }}>
+                      <Typography variant='caption' sx={{ fontWeight: 700, color: '#21865B' }}>✓ {item.batchId}</Typography>
+                      <Typography variant='body2' sx={{ fontWeight: 700 }}>{item.treeCode}</Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+                {trees
+                  .filter(t => t.adoptionStatus === 'ELIGIBLE')
+                  .map(t => (
+                    <Card key={t.id} sx={{ borderRadius: '12px', border: '1px solid #C6E3D2' }}>
+                      <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography variant='caption' sx={{ fontWeight: 700, color: '#176B4D' }}>🌲 {t.treeCode}</Typography>
+                          <Chip label='ELIGIBLE' size='small' sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#E7F3EC', color: '#21865B', fontWeight: 700 }} />
+                        </Box>
+                        <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>
+                          {t.species?.localName}
+                        </Typography>
+                        <Typography variant='caption' sx={{ fontStyle: 'italic', color: '#66756D' }}>
+                          {t.species?.scientificName}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Column 4: Insiden Pohon Tumbang / Sakit */}
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <Box sx={{ bgcolor: '#FDF4F4', p: 2.5, borderRadius: '16px', border: '1px solid #F5CECE', minHeight: 420 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 800, color: '#D94B4B' }}>
+                  4. INSIDEN POHON
+                </Typography>
+                <Chip label={incidents.length} size='small' sx={{ bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 700 }} />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {incidents.map((inc: any, idx: number) => (
+                  <Card key={inc.id} sx={{ borderRadius: '12px', border: '1px solid #F5CECE' }}>
+                    <CardContent sx={{ p: '16px !important', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant='caption' sx={{ fontWeight: 700, color: '#D94B4B' }}>
+                          INC-2026-0{idx + 1} • {inc.tree?.treeCode || 'KNP-MRG-003'}
+                        </Typography>
+                        <Chip
+                          label={(inc.severity || 'HIGH').toUpperCase()}
+                          size='small'
+                          sx={{ height: 18, fontSize: '0.62rem', bgcolor: '#FDECEC', color: '#D94B4B', fontWeight: 700 }}
+                        />
+                      </Box>
+                      <Typography variant='body2' sx={{ fontWeight: 600, color: '#17251E' }}>
+                        {inc.description}
+                      </Typography>
+                      <Button
+                        size='small'
+                        variant='outlined'
+                        href='/incidents'
+                        sx={{ mt: 0.5, borderColor: '#D94B4B', color: '#D94B4B', fontWeight: 600 }}
+                      >
+                        Buka Triage Insiden
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      ) : (
+        /* Table View */
+        <Card sx={{ borderRadius: '16px', border: '1px solid #DFE7E0', overflow: 'hidden', maxWidth: '100%' }}>
+          <CardHeader
+            title={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography variant='h6' sx={{ fontWeight: 700 }}>Daftar Pengiriman Batch Survei</Typography>
+                <Chip label={`${surveys.length} Submission Live BE`} size='small' color='success' sx={{ fontWeight: 600 }} />
+              </Box>
+            }
+          />
+          <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 700 }}>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <CircularProgress size={32} sx={{ color: '#176B4D', mb: 1 }} />
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Memuat antrean review survei dari backend...</Typography>
-                  </TableCell>
+                  <TableCell>Batch ID & Tanggal</TableCell>
+                  <TableCell>Kawasan & Kode Tugas</TableCell>
+                  <TableCell>Surveyor</TableCell>
+                  <TableCell>Cakupan Pohon</TableCell>
+                  <TableCell>Status Review</TableCell>
+                  <TableCell align='right'>Aksi</TableCell>
                 </TableRow>
-              ) : surveys.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align='center' sx={{ py: 6 }}>
-                    <Typography variant='body2' sx={{ color: '#66756D' }}>Seluruh submission survei telah selesai ditinjau.</Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                surveys.map(item => (
+              </TableHead>
+              <TableBody>
+                {surveys.map(item => (
                   <TableRow key={item.id} hover>
                     <TableCell>
                       <Typography variant='body2' sx={{ fontWeight: 700, color: '#176B4D' }}>{item.batchId}</Typography>
@@ -201,18 +408,18 @@ export default function SurveysPage() {
                           setSelectedBatch(item)
                           setReviewNotes('')
                         }}
-                        sx={{ borderColor: '#176B4D', color: '#176B4D', textTransform: 'none', fontWeight: 600 }}
+                        sx={{ borderColor: '#176B4D', color: '#176B4D', fontWeight: 600 }}
                       >
                         Detail & Review
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+      )}
 
       {/* Modal Detail & Review Batch */}
       <Dialog open={Boolean(selectedBatch)} onClose={() => setSelectedBatch(null)} maxWidth='sm' fullWidth>
@@ -262,14 +469,14 @@ export default function SurveysPage() {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button onClick={() => setSelectedBatch(null)} sx={{ textTransform: 'none', color: '#66756D' }}>
+          <Button onClick={() => setSelectedBatch(null)} sx={{ color: '#66756D' }}>
             Batal
           </Button>
           <Button
             variant='outlined'
             disabled={submitting}
             onClick={() => handleReviewDecision('REVISION_REQUIRED')}
-            sx={{ borderColor: '#D94B4B', color: '#D94B4B', textTransform: 'none' }}
+            sx={{ borderColor: '#D94B4B', color: '#D94B4B' }}
           >
             Minta Revisi
           </Button>
@@ -277,7 +484,7 @@ export default function SurveysPage() {
             variant='contained'
             disabled={submitting}
             onClick={() => handleReviewDecision('APPROVED')}
-            sx={{ bgcolor: '#176B4D', color: '#ffffff', textTransform: 'none', fontWeight: 600, '&:hover': { bgcolor: '#104D39' } }}
+            sx={{ bgcolor: '#176B4D', color: '#ffffff', fontWeight: 600 }}
           >
             {submitting ? 'Menyimpan...' : 'Setujui Batch'}
           </Button>

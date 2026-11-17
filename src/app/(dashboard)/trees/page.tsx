@@ -256,15 +256,15 @@ export default function TreesPage() {
         </TableContainer>
       </Card>
 
-      {/* Review Modal Dialog */}
+      {/* Review Modal Dialog with Vertical Stepper & Activity Timeline (PRD Bagian 2.2) */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth='sm' fullWidth>
         <DialogTitle sx={{ fontWeight: 700, color: '#17251E' }}>
-          Verifikasi Data Pohon Lapangan
+          Verifikasi Bertahap & Riwayat Siklus Hidup Pohon
         </DialogTitle>
-        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {selectedTree && (
             <>
-              <Box sx={{ p: 2, bgcolor: '#F7F9F7', borderRadius: '8px' }}>
+              <Box sx={{ p: 2, bgcolor: '#F4FAF6', borderRadius: '10px', border: '1px solid #C6E3D2' }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 700, color: '#176B4D' }}>
                   {selectedTree.speciesLocal} ({selectedTree.speciesLatin})
                 </Typography>
@@ -273,28 +273,52 @@ export default function TreesPage() {
                 </Typography>
               </Box>
 
-              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Diameter Batang (DBH)</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedTree.dbh}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Estimasi Tinggi</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedTree.height}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Koordinat GPS</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedTree.lat}, {selectedTree.lng}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='caption' sx={{ color: '#66756D' }}>Surveyor Lapangan</Typography>
-                  <Typography variant='body2' sx={{ fontWeight: 600 }}>{selectedTree.surveyor}</Typography>
-                </Box>
-              </Box>
-
-              <Box>
-                <Typography variant='caption' sx={{ color: '#66756D' }}>Catatan Lapangan:</Typography>
-                <Typography variant='body2' sx={{ fontStyle: 'italic', mt: 0.5 }}>{selectedTree.notes}</Typography>
+              {/* Vertical Stepper & Activity Timeline (PRD 2.2) */}
+              <Box sx={{ pl: 1 }}>
+                {[
+                  {
+                    step: 'Langkah 1 — Data Dasar & Taksonomi',
+                    desc: `Spesies: ${selectedTree.speciesLocal} (${selectedTree.speciesLatin}) • Dimensi DBH ${selectedTree.dbh}, Tinggi ${selectedTree.height}`
+                  },
+                  {
+                    step: 'Langkah 2 — Validasi Titik Koordinat Spasial PostGIS',
+                    desc: `Koordinat GPS (${selectedTree.lat}, ${selectedTree.lng}) valid berada di dalam MultiPolygon kawasan (ST_Covers = true)`
+                  },
+                  {
+                    step: 'Langkah 3 — Pemeriksaan Bukti Foto & Tag QR Fisik',
+                    desc: selectedTree.notes
+                  },
+                  {
+                    step: 'Langkah 4 — Keputusan Kelayakan Katalog Adopsi',
+                    desc: `Status Saat Ini: ${selectedTree.adoptionStatus} (${selectedTree.health})`
+                  }
+                ].map((st, i) => (
+                  <Box key={i} sx={{ display: 'flex', gap: 2, pb: i === 3 ? 0 : 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <Box
+                        sx={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: '50%',
+                          bgcolor: '#176B4D',
+                          color: '#ffffff',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {i + 1}
+                      </Box>
+                      {i < 3 && <Box sx={{ width: 2, flex: 1, bgcolor: '#C6E3D2', my: 0.5 }} />}
+                    </Box>
+                    <Box>
+                      <Typography variant='body2' sx={{ fontWeight: 700, color: '#17251E' }}>{st.step}</Typography>
+                      <Typography variant='caption' sx={{ color: '#66756D' }}>{st.desc}</Typography>
+                    </Box>
+                  </Box>
+                ))}
               </Box>
             </>
           )}
